@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  
+  
+    <meta name="keywords" content="docker,docker镜像存储,">
+  
+
+  
+  
+    <meta name="description" content="docker基础之镜像存储">
+  
+  
+  <link rel="icon" type="image/x-icon" href="/logo.png">
+  <title>docker基础之镜像存储 [ GeedChin ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+</head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="http://geedchin.com/images/logo.png">
+    <span class="title">GeedChin</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">首页</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives/" class="pure-menu-link">归档</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/categories/" class="pure-menu-link">分类</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags/" class="pure-menu-link">标签</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/search/" class="pure-menu-link">搜索</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/about/" class="pure-menu-link">关于</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        docker基础之镜像存储
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2019-06-16T14:50:14.000Z">
+        2019-06-16
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker镜像存储/">docker镜像存储</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <!--span class="slash">/</span>
+      <span class="read">阅读耗时 </span-->
+    </header>
+
+    <div class="post-content">
+      <h1 id="Union-File-System"><a href="#Union-File-System" class="headerlink" title="Union File System"></a>Union File System</h1><h2 id="什么是Union-File-System"><a href="#什么是Union-File-System" class="headerlink" title="什么是Union File System"></a>什么是Union File System</h2><blockquote>
+<p>Union File System简称 UnionFS，是一种为Linux，FreeBSD，NetBSD操作系统设计的，把其他文件系统联合到一个挂载点的文件系统服务。它使用<code>branch</code>将不同文件和目录透明地覆盖，形成一个单一一致的文件系统。这些<code>branch</code>都是readonly或read-write的，当对这个虚拟后的联合文件系统进行写操作时，系统是真正写到了一个新的文件中，看起来这个虚拟的联合文件系统是对任何文件进行操作的，但实际上并未改变原来的文件，unionFS使用了写时复制技术。</p>
+<p>写时复制（copy on write，简称CoW），也叫隐式共享，是一种对可修改资源实现高效复制的资源管理技术。主要思想：如果一个资源是重复的，没有任何修改，这时并不需要立即创建一个新资源，这个资源可以被共享，一旦有写操作发生时，就会将该资源复制一份，而且写操作发生在新copy的资源上。通过这种方式，可以减少未修改资源复制带来的消耗和硬盘存储的消耗。</p>
+</blockquote>
+<h2 id="Overlay"><a href="#Overlay" class="headerlink" title="Overlay"></a>Overlay</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><blockquote>
+<p>Overlay主要目录结构：lower，upper，work，merge：</p>
+<ol>
+<li>lower：在docker中用于存放镜像分层文件，只读。可以有多个</li>
+<li>upper：在docker中用于存放修改的文件，新增、修改、删除等，对应docker存储的 diff目录</li>
+<li>work：</li>
+<li>merge：存放多个lower、upper合并后的文件和目录，对应docker的 merge目录</li>
+</ol>
+<p>对联合挂载在merge目录下的文件操作规则：</p>
+<ol>
+<li>新增：新增文件会直接将新增的文件写入到upper目录下</li>
+<li>修改：如果对lower层中的文件修改，则会引起copy，文件copy到upper目录下，所有修改操作在upper目录下完成；如果对upper目录文件修改（包括新增的文件和已经从底层copy出的文件），则直接修改</li>
+<li>删除：在upper目录中会对文件标记删除（使用ll查看文件标识为<code>c --- --- ---</code>，正常文件第一个标识位为-，目录为d），合并到merge目录下的效果为删除。</li>
+</ol>
+</blockquote>
+<h3 id="大文件修改"><a href="#大文件修改" class="headerlink" title="大文件修改"></a>大文件修改</h3><blockquote>
+<p>对lower层大文件修改时，会产生一个<code>.file.swp</code>（<code>.</code>前缀和<code>.swp</code>后缀）文件，修改文件在该文件操作，当执行保存时，首先将文件从lower层该文件复制到upper层中，命名为<code>file~</code>（在文件后加<code>~</code>后缀），然后将<code>file~</code>与<code>.file.swp</code>文件合并生成最终文件并删除<code>file~</code>。
+本地测试显示，当保存文件时，新<code>file</code>和<code>file~</code>与<code>lower</code>层<code>file</code>曾同时共存。当文件从<code>file~</code> 完全copy到<code>file</code>时，会被删除。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>本地测试记录：<br>当使用vim打开大文件时，对应的upper目录中生成了 <code>.file.swp</code>文件，当对其编辑时，所有修改操作都在该文件中记录（随着新增内容，swp文件大小随之改变）；当执行保存时，<code>upper</code>中生成了<code>file~</code>文件，当该文件大小不再变动时查看大小，发现与lower层中文件大小一致，说明该文件为lower层文件的副本。</p>
+<p>此过程与Linux写大文件操作基本一致：本地生成.swp文件，然后直接将源文件重命名为<code>file~</code>，再合并两者为最终文件，然后删除<code>file~</code>。在OverlayFS中区别为，<code>file~</code>文件在OverlayFS中是从底层复制的[当修改upper层文件时与Linux中写大文件操作一致]，而在Linux中写大文件时<code>file~</code>是直接把源文件重命名的</p>
+</blockquote>
+<h3 id="自己动手使用Overlay"><a href="#自己动手使用Overlay" class="headerlink" title="自己动手使用Overlay"></a>自己动手使用Overlay</h3><blockquote>
+<p>实验环境：centos7，内核：4.4.169-1.el7.elrepo.x86_64</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">文件路径： /app/overlayfs-test</span><br><span class="line">目录结构：</span><br><span class="line">.</span><br><span class="line">├── layer1</span><br><span class="line">│   ├── 1.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── layer2</span><br><span class="line">│   ├── 2.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── layer3</span><br><span class="line">│   ├── 3.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── layer4</span><br><span class="line">│   ├── 4.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── mnt</span><br><span class="line">├── upper</span><br><span class="line">└── work</span><br><span class="line">    └── work</span><br><span class="line">文件内容： </span><br><span class="line">1. layer&#123;n&#125;/&#123;n&#125;.txt 内容里的内容为 n</span><br><span class="line">2. layer&#123;n&#125;/tmp.txt 内容里的内容为 n</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>执行命令：</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -t overlay -o lowerdir=/app/overlayfs-test/layer1:/app/overlayfs-test/layer2:/app/overlayfs-test/layer3:/app/overlayfs-test/layer4,upperdir=/app/overlayfs-test/upper,workdir=/app/overlayfs-test/work overlay /app/overlayfs-test/mnt</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>命令格式： <code>(格式：mount -t overlay -o lowerdir=pwd1:pwd2,upperdir=pwd3,workdir=pwd4 overlay pwd5)</code></p>
+<p>格式说明：命令中 <code>pwd{n}</code>部分均为变量，根据自己挂载情况修改，lowerdir=pwd1:pwd2，当pwd1和pwd2中有同名文件，则显示的是pwd1中的文件。upperdir指定了upper文件的目录，workdir指定了work目录，最后一个参数指定了merge目录。</p>
+<p>执行后的目录结构：</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── layer1</span><br><span class="line">│   ├── 1.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── layer2</span><br><span class="line">│   ├── 2.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── layer3</span><br><span class="line">│   ├── 3.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── layer4</span><br><span class="line">│   ├── 4.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── mnt</span><br><span class="line">│   ├── 1.txt</span><br><span class="line">│   ├── 2.txt</span><br><span class="line">│   ├── 3.txt</span><br><span class="line">│   ├── 4.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── upper</span><br><span class="line">└── work</span><br><span class="line">    └── work</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如上， {n}.txt都挂载到了 mnt目录下，tmp.txt文件则只有一个，<code>cat mnt/tmp.txt</code>输出<code>1</code></p>
+<p>在mnt目录新增文件<code>x.txt</code>输入x，删除<code>1.txt</code>，编辑<code>2.txt</code>输入x2，新的目录结构：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── layer1</span><br><span class="line">│   ├── 1.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── layer2</span><br><span class="line">│   ├── 2.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── layer3</span><br><span class="line">│   ├── 3.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── layer4</span><br><span class="line">│   ├── 4.txt</span><br><span class="line">│   └── tmp.txt</span><br><span class="line">├── mnt</span><br><span class="line">│   ├── 2.txt</span><br><span class="line">│   ├── 3.txt</span><br><span class="line">│   ├── 4.txt</span><br><span class="line">│   ├── tmp.txt</span><br><span class="line">│   └── x.txt</span><br><span class="line">├── upper</span><br><span class="line">│   ├── 1.txt</span><br><span class="line">│   ├── 2.txt</span><br><span class="line">│   └── x.txt</span><br><span class="line">└── work</span><br><span class="line">    └── work</span><br><span class="line">``` </span><br><span class="line">&gt; upper目录中，执行命令：</span><br><span class="line">&gt; </span><br><span class="line">```bash</span><br><span class="line">[root@node2 upper]# ll</span><br><span class="line">总用量 8</span><br><span class="line">c--------- 1 root root 0, 0 6月  16 23:36 1.txt</span><br><span class="line">-rw-r--r-- 1 root root    3 6月  16 23:36 2.txt</span><br><span class="line">-rw-r--r-- 1 root root    2 6月  16 23:36 x.txt</span><br><span class="line">[root@node2 upper]# cat 2.txt </span><br><span class="line">x2</span><br><span class="line">[root@node2 upper]# cat x.txt </span><br><span class="line">x</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>其中，<code>1.txt</code>标记为删除，<code>2.txt</code>内容改为x2，<code>x.txt</code>是新增的文件</p>
+<p>在<code>mnt</code>目录下，文件<code>1.txt</code>也确实被删除了，<code>x.txt</code>文件也添加进来了，<code>2.txt</code>内容也改为x2。反观<code>layer1</code>目录下，<code>1.txt</code>文件还存在，<code>layer2</code>目录中<code>2.txt</code>内容仍然为<code>2</code></p>
+</blockquote>
+
+    </div>
+
+    <div>全文完。</div>
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Union-File-System"><span class="toc-text">Union File System</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Union-File-System"><span class="toc-text">什么是Union File System</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Overlay"><span class="toc-text">Overlay</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#大文件修改"><span class="toc-text">大文件修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自己动手使用Overlay"><span class="toc-text">自己动手使用Overlay</span></a></li></ol></li></ol></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+<div class="share" style="width: 100%;">
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">请我喝咖啡</div>
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;max-width:500px;">
+      <div style="float:left;margin-left:50px;">
+        <div style="margin: auto; text-align: center; font-size: 0.8em; color: red;">支付宝</div>
+        <image src="/resources/myqr/alipay.jpg">
+      </image></div>
+      <div style="float:left; margin-left: 50px;">
+        <div style="margin: auto; text-align: center; font-size: 0.8em; color: red;">微信</div>
+        <image src="/resources/myqr/wechatpay.jpg">
+      </image></div>
+      <div style="clear:left;"></div>
+  </div>
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/blog/2019/06/06/20190606154010.html" rel="next" title="client-go源码阅读之-controller(+简单实现)">
+          client-go源码阅读之-controller(+简单实现)
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://geedchin.com">首页</a> |
+        <a class="bottom-item" href="https://geedchin.com" target="_blank">主站</a> |
+        <a class="bottom-item" href="https://github.com/geedchin" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
+    </div>
+</footer>
+  
+  <!-- scripts list from theme config.yml -->
+  
+    <script src="//cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+  
+    <script src="/js/xoxo.js"></script>
+  
+
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+</body>
+</html>
