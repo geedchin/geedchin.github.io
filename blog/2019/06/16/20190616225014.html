@@ -105,7 +105,24 @@
 <p>Union File System简称 UnionFS，是一种为Linux，FreeBSD，NetBSD操作系统设计的，把其他文件系统联合到一个挂载点的文件系统服务。它使用<code>branch</code>将不同文件和目录透明地覆盖，形成一个单一一致的文件系统。这些<code>branch</code>都是readonly或read-write的，当对这个虚拟后的联合文件系统进行写操作时，系统是真正写到了一个新的文件中，看起来这个虚拟的联合文件系统是对任何文件进行操作的，但实际上并未改变原来的文件，unionFS使用了写时复制技术。</p>
 <p>写时复制（copy on write，简称CoW），也叫隐式共享，是一种对可修改资源实现高效复制的资源管理技术。主要思想：如果一个资源是重复的，没有任何修改，这时并不需要立即创建一个新资源，这个资源可以被共享，一旦有写操作发生时，就会将该资源复制一份，而且写操作发生在新copy的资源上。通过这种方式，可以减少未修改资源复制带来的消耗和硬盘存储的消耗。</p>
 </blockquote>
-<h2 id="Overlay"><a href="#Overlay" class="headerlink" title="Overlay"></a>Overlay</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><blockquote>
+<h2 id="Aufs"><a href="#Aufs" class="headerlink" title="Aufs"></a>Aufs</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><blockquote>
+<p>aufs(Advanced multi layered unification filesystem)是一种支持联合挂载的文件系统，aufs将不同目录分层挂载到同一个目录下，每一层都是一个普通的文件系统。</p>
+</blockquote>
+<h3 id="读写操作"><a href="#读写操作" class="headerlink" title="读写操作"></a>读写操作</h3><blockquote>
+<p>当需要读写一个文件时，会从最顶层开始向下寻找，本层没有，则根据层之间的关系到下一层找，直到找到第一个文件并打开它。</p>
+<p>当写入一个文件时，如果文件不存在，则在读写层新建一个，否则向上边一个过程一样从顶层开始查找，直到找到最近的文件，aufs会将其复制到读写层进行修改。</p>
+<p>当删除一个文件时，若文件仅存在于读写层，则可以直接删除，否则删除其在读写层的北方，再在读写层创建一个whiteout文件来标识文件不存在。</p>
+<p>当新建一个文件时，若文件在读写层存在whiteout文件，则先删除之再新建，否则直接新建。</p>
+</blockquote>
+<h2 id="Device-Mapper"><a href="#Device-Mapper" class="headerlink" title="Device Mapper"></a>Device Mapper</h2><h3 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h3><blockquote>
+<p>Device Mapper是一种从逻辑设备到物理设备的映射框架，通过使用它，用户可以很方便地根据自己的需要制定实现存储资源的管理策略。</p>
+<p>它主要包括3个概念：映射设备、映射表、目标设备。</p>
+</blockquote>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><blockquote>
+<p>docker使用Device Mapper的CopyOnWrite发生在块存储级别。Device mapper驱动会先在块设备上创建一个资源池，然后在资源池上创建一个带有文件系统的基本设备，所有镜像都是这个基本设备的快照，而容器则是镜像的快照。所以在容器里看到文件系统是资源池上基本设备的文件系统的快照，并不有为容器分配空间。当要写入一个新文件时，在容器的镜像内为其分配新的块并写入数据，这个叫用时分配。当要修改已有文件时，再使用CoW为容器快照分配块空间，将要修改的数据复制到在容器快照中新的块里再进行修改。Device mapper 驱动默认会创建一个100G的文件包含镜像和容器。每一个容器被限制在10G大小的卷内，可以自己配置调整。</p>
+<p>DeviceMapper 根据使用的基础块设备是真正的块设备哈斯稀疏文件挂载的loop设备分为两种模式：direct-lvm模式和loop-lvm模式，两者性能差别很大。</p>
+</blockquote>
+<h2 id="Overlay"><a href="#Overlay" class="headerlink" title="Overlay"></a>Overlay</h2><h3 id="简介-2"><a href="#简介-2" class="headerlink" title="简介"></a>简介</h3><blockquote>
 <p>Overlay主要目录结构：lower，upper，work，merge：</p>
 <ol>
 <li>lower：在docker中用于存放镜像分层文件，只读。可以有多个</li>
@@ -164,7 +181,7 @@
     
   <div id="toc" class="toc-article">
     <strong class="toc-title">目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Union-File-System"><span class="toc-text">Union File System</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Union-File-System"><span class="toc-text">什么是Union File System</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Overlay"><span class="toc-text">Overlay</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#大文件修改"><span class="toc-text">大文件修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自己动手使用Overlay"><span class="toc-text">自己动手使用Overlay</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Union-File-System"><span class="toc-text">Union File System</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Union-File-System"><span class="toc-text">什么是Union File System</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Aufs"><span class="toc-text">Aufs</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#读写操作"><span class="toc-text">读写操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Device-Mapper"><span class="toc-text">Device Mapper</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介-1"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#说明"><span class="toc-text">说明</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Overlay"><span class="toc-text">Overlay</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介-2"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#大文件修改"><span class="toc-text">大文件修改</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自己动手使用Overlay"><span class="toc-text">自己动手使用Overlay</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -203,6 +220,11 @@
   
       <div class="post-nav-item post-nav-prev">
           
+          <a href="/blog/2019/06/20/20190620225014.html" rel="prev" title="docker基础之资源隔离">
+            docker基础之资源隔离
+          </a>
+          <span>〉</span>
+        
       </div>
     </div>
   
