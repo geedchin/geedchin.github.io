@@ -101,7 +101,7 @@
     </header>
 
     <div class="post-content">
-      <h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><blockquote>
+      <blockquote>
 <p>能够生成分析和调试信息是我喜欢Go语言的原因之一。通过配置<code>GODEBUG</code>环境变量可以在程序运行期间打印出调试信息，包括gc和scheduler的详细或摘要。最棒的是你不必在程序里设置任何开关它就能够正常工作。</p>
 </blockquote>
 <h1 id="开始前"><a href="#开始前" class="headerlink" title="开始前"></a>开始前</h1><blockquote>
@@ -144,7 +144,7 @@
 <blockquote>
 <p>程序在运行时给了我们很多非常棒的摘要信息。当我们在查看第一秒打印的追踪信息时，我们可以看到一个goroutine是如何运行而其他9个goroutine在 P的local 运行队列中等待。</p>
 </blockquote>
-<p>示例图1<br><img src="/resources/post_pic/2019/06/diagram1.png" alt="示例图1"></p>
+<p>示例图1<br><img src="/resources/post_pic/2019/06/diagram1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/240" alt="示例图1"></p>
 <blockquote>
 <p>在示例图1中，用字母 <code>P</code> 来表示processor，用字母 <code>M</code> 来表示线程，用字母 <code>G</code> 来表示goroutine。我们可以根据 <code>runqueue</code> 的值为0而推断出全局的运行队列(Global Run Queue)是空的。prcessor 的 <code>idleprocs</code> 值为0，而它正在运行着一个 goroutine ，我们后边新建的goroutine则在这个 processor的local 运行队列中（根据process 的<code>runqueue</code>值为9判断的）。</p>
 <p>当我们把processor个数配置多个时会有怎样的追踪信息呢？让我们把<code>GOMAXPROCS</code>的值设置为2，再看一次：</p>
@@ -257,7 +257,7 @@
     
   <div id="toc" class="toc-article">
     <strong class="toc-title">目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#开始前"><span class="toc-text">开始前</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#代码"><span class="toc-text">代码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分析"><span class="toc-text">分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#追踪scheduler摘要信息"><span class="toc-text">追踪scheduler摘要信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#追踪详细信息"><span class="toc-text">追踪详细信息</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#结论"><span class="toc-text">结论</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#开始前"><span class="toc-text">开始前</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#代码"><span class="toc-text">代码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#分析"><span class="toc-text">分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#追踪scheduler摘要信息"><span class="toc-text">追踪scheduler摘要信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#追踪详细信息"><span class="toc-text">追踪详细信息</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#结论"><span class="toc-text">结论</span></a></li></ol>
   </div>
 
 
@@ -296,6 +296,11 @@
   
       <div class="post-nav-item post-nav-prev">
           
+          <a href="/blog/2019/06/23/20190623220012.html" rel="prev" title="[转]go调度器源码分析">
+            [转]go调度器源码分析
+          </a>
+          <span>〉</span>
+        
       </div>
     </div>
   
@@ -314,6 +319,22 @@
         <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
         <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
     </div>
+    
+<!--
+
+<script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+<script src='/resources/lib/js/mermaid@7.1.2.min.js'></script>
+
+-->
+    
+	  <script src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+      
+	  <script>
+	    if (window.mermaid) {
+	      mermaid.initialize({theme: 'forest'});
+	    }
+	  </script>
+	
 </footer>
   
   <!-- scripts list from theme config.yml -->

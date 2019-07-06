@@ -129,6 +129,14 @@
 
 <h3 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># blog配置文件</span></span><br><span class="line"><span class="attr">search:</span></span><br><span class="line"><span class="attr">  path:</span> <span class="string">search.xml</span></span><br><span class="line"><span class="attr">  field:</span> <span class="string">post</span></span><br><span class="line"><span class="attr">  format:</span> <span class="string">html</span></span><br><span class="line"><span class="attr">  limit:</span> <span class="number">10000</span></span><br><span class="line"><span class="comment"># 主题配置文件 themes/主题名/_config.yml</span></span><br><span class="line"><span class="attr">local_search:</span></span><br><span class="line"><span class="attr">  enable:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
 
+<h3 id="安装mermaid插件："><a href="#安装mermaid插件：" class="headerlink" title="安装mermaid插件："></a>安装mermaid插件：</h3><h4 id="安装命令"><a href="#安装命令" class="headerlink" title="安装命令"></a>安装命令</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-filter-mermaid-diagrams -u</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h4><p><code>_config.yml</code>中增加配置：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mermaid chart</span></span><br><span class="line"><span class="attr">mermaid:</span> <span class="comment">## mermaid url https://github.com/knsv/mermaid</span></span><br><span class="line"><span class="attr">  enable:</span> <span class="literal">true</span>  <span class="comment"># default true</span></span><br><span class="line"><span class="attr">  version:</span> <span class="string">"7.1.2"</span> <span class="comment"># default v7.1.2</span></span><br><span class="line"><span class="attr">  options:</span>  <span class="comment"># find more api options from https://github.com/knsv/mermaid/blob/master/src/mermaidAPI.js</span></span><br><span class="line">    <span class="comment">#startOnload: true  // default true</span></span><br></pre></td></tr></table></figure>
+
+<p>在页面加入引用：<a href="https://github.com/webappdevelp/hexo-filter-mermaid-diagrams" target="_blank" rel="noopener">github地址</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;% if (theme.mermaid.enable) &#123; %&gt;</span><br><span class="line">  &lt;script src=&apos;https://unpkg.com/mermaid@&lt;%= theme.mermaid.version %&gt;/dist/mermaid.min.js&apos;&gt;&lt;/script&gt;</span><br><span class="line">  &lt;script&gt;</span><br><span class="line">    if (window.mermaid) &#123;</span><br><span class="line">      mermaid.initialize(&#123;theme: &apos;forest&apos;&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &lt;/script&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+
 <h3 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h3><ol>
 <li>ERROR Deployer not found: git<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install --save hexo-deployer-git</span><br></pre></td></tr></table></figure>
 
@@ -143,7 +151,7 @@
     
   <div id="toc" class="toc-article">
     <strong class="toc-title">目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#GitHub搭建博客"><span class="toc-text">GitHub搭建博客</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装node-js"><span class="toc-text">安装node.js</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装hexo"><span class="toc-text">安装hexo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GitHub创建项目，并拉至本地"><span class="toc-text">GitHub创建项目，并拉至本地</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化hexo环境"><span class="toc-text">初始化hexo环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置ssh，让本地可免密push到GitHub"><span class="toc-text">配置ssh，让本地可免密push到GitHub</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建博客，并上传到git"><span class="toc-text">新建博客，并上传到git</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#新建博客"><span class="toc-text">新建博客</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置"><span class="toc-text">配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署"><span class="toc-text">部署</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增加搜索功能"><span class="toc-text">增加搜索功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装插件："><span class="toc-text">安装插件：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改配置文件"><span class="toc-text">修改配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#报错"><span class="toc-text">报错</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#GitHub搭建博客"><span class="toc-text">GitHub搭建博客</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装node-js"><span class="toc-text">安装node.js</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装hexo"><span class="toc-text">安装hexo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GitHub创建项目，并拉至本地"><span class="toc-text">GitHub创建项目，并拉至本地</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化hexo环境"><span class="toc-text">初始化hexo环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置ssh，让本地可免密push到GitHub"><span class="toc-text">配置ssh，让本地可免密push到GitHub</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新建博客，并上传到git"><span class="toc-text">新建博客，并上传到git</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#新建博客"><span class="toc-text">新建博客</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置"><span class="toc-text">配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署"><span class="toc-text">部署</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#增加搜索功能"><span class="toc-text">增加搜索功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装插件："><span class="toc-text">安装插件：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改配置文件"><span class="toc-text">修改配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装mermaid插件："><span class="toc-text">安装mermaid插件：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装命令"><span class="toc-text">安装命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#配置-1"><span class="toc-text">配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#报错"><span class="toc-text">报错</span></a></li></ol></li></ol></li></ol>
   </div>
 
 
@@ -205,6 +213,22 @@
         <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
         <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
     </div>
+    
+<!--
+
+<script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+<script src='/resources/lib/js/mermaid@7.1.2.min.js'></script>
+
+-->
+    
+	  <script src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+      
+	  <script>
+	    if (window.mermaid) {
+	      mermaid.initialize({theme: 'forest'});
+	    }
+	  </script>
+	
 </footer>
   
   <!-- scripts list from theme config.yml -->
