@@ -812,7 +812,58 @@ var WEEKDAY = 8;
 
 addFormatToken('Y', 0, 0, function () {
     var y = this.year();
-    return y <= 0 2 4="==" 100 366 400="==" 9999 ? '' + y : '+' y; }); addformattoken(0, ['yy', 2], 0, function () { return this.year() % 100; ['yyyy', 4], 'year'); ['yyyyy', 5], ['yyyyyy', 6, true], aliases addunitalias('year', 'y'); priorities addunitpriority('year', 1); parsing addregextoken('y', matchsigned); addregextoken('yy', match1to2, match2); addregextoken('yyyy', match1to4, match4); addregextoken('yyyyy', match1to6, match6); addregextoken('yyyyyy', addparsetoken(['yyyyy', 'yyyyyy'], year); addparsetoken('yyyy', (input, array) array[year]="input.length" =="=" hooks.parsetwodigityear(input) toint(input); addparsetoken('yy', addparsetoken('y', 10); helpers daysinyear(year) isleapyear(year) 365; } (year && year !="=" 0) || 0; hooks hooks.parsetwodigityear="function" (input) toint(input) (toint(input)> 68 ? 1900 : 2000);
+    return y <= 9999 ? '' + y : '+' + y;
+});
+
+addFormatToken(0, ['YY', 2], 0, function () {
+    return this.year() % 100;
+});
+
+addFormatToken(0, ['YYYY',   4],       0, 'year');
+addFormatToken(0, ['YYYYY',  5],       0, 'year');
+addFormatToken(0, ['YYYYYY', 6, true], 0, 'year');
+
+// ALIASES
+
+addUnitAlias('year', 'y');
+
+// PRIORITIES
+
+addUnitPriority('year', 1);
+
+// PARSING
+
+addRegexToken('Y',      matchSigned);
+addRegexToken('YY',     match1to2, match2);
+addRegexToken('YYYY',   match1to4, match4);
+addRegexToken('YYYYY',  match1to6, match6);
+addRegexToken('YYYYYY', match1to6, match6);
+
+addParseToken(['YYYYY', 'YYYYYY'], YEAR);
+addParseToken('YYYY', function (input, array) {
+    array[YEAR] = input.length === 2 ? hooks.parseTwoDigitYear(input) : toInt(input);
+});
+addParseToken('YY', function (input, array) {
+    array[YEAR] = hooks.parseTwoDigitYear(input);
+});
+addParseToken('Y', function (input, array) {
+    array[YEAR] = parseInt(input, 10);
+});
+
+// HELPERS
+
+function daysInYear(year) {
+    return isLeapYear(year) ? 366 : 365;
+}
+
+function isLeapYear(year) {
+    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+// HOOKS
+
+hooks.parseTwoDigitYear = function (input) {
+    return toInt(input) + (toInt(input) > 68 ? 1900 : 2000);
 };
 
 // MOMENTS
@@ -1211,7 +1262,10 @@ function dayOfYearFromWeeks(year, week, weekday, dow, doy) {
         dayOfYear = 1 + 7 * (week - 1) + localWeekday + weekOffset,
         resYear, resDayOfYear;
 
-    if (dayOfYear <= 0) { resyear="year" - 1; resdayofyear="daysInYear(resYear)" + dayofyear; } else if (dayofyear> daysInYear(year)) {
+    if (dayOfYear <= 0) {
+        resYear = year - 1;
+        resDayOfYear = daysInYear(resYear) + dayOfYear;
+    } else if (dayOfYear > daysInYear(year)) {
         resYear = year + 1;
         resDayOfYear = dayOfYear - daysInYear(year);
     } else {
@@ -2290,7 +2344,153 @@ function extractFromRFC2822Strings(yearStr, monthStr, dayStr, hourStr, minuteStr
 
 function untruncateYear(yearStr) {
     var year = parseInt(yearStr, 10);
-    if (year <= 60 1900 2000 2822 49) { return + year; } else if (year <="999)" function preprocessrfc2822(s) remove comments and folding whitespace replace multiple-spaces with a single space s.replace( \([^)]*\)|[\n\t] g, ' ').replace( (\s\s+) ').trim(); checkweekday(weekdaystr, parsedinput, config) (weekdaystr) todo: the vanilla js date object an indepentent day-of-week check. var weekdayprovided="defaultLocaleWeekdaysShort.indexOf(weekdayStr)," weekdayactual="new" date(parsedinput[0], parsedinput[1], parsedinput[2]).getday(); (weekdayprovided !="=" weekdayactual) getparsingflags(config).weekdaymismatch="true;" config._isvalid="false;" false; true; obsoffsets="{" ut: 0, gmt: edt: -4 * 60, est: -5 cdt: cst: -6 mdt: mst: -7 pdt: pst: -8 }; calculateoffset(obsoffset, militaryoffset, numoffset) (obsoffset) obsoffsets[obsoffset]; (militaryoffset) only allowed military tz is z 0; hm="parseInt(numOffset," 10); m="hm" % 100, h="(hm" - m) 100; m; time from ref format configfromrfc2822(config) match="rfc2822.exec(preprocessRFC2822(config._i));" (match) parsedarray="extractFromRFC2822Strings(match[4]," match[3], match[2], match[5], match[6], match[7]); (!checkweekday(match[1], parsedarray, config)) return; config._a="parsedArray;" config._tzm="calculateOffset(match[8]," match[9], match[10]); config._d="createUTCDate.apply(null," config._a); config._d.setutcminutes(config._d.getutcminutes() config._tzm); getparsingflags(config).rfc2822="true;" iso or fallback configfromstring(config) matched="aspNetJsonRegex.exec(config._i);" (matched null) date(+matched[1]); configfromiso(config); (config._isvalid="==" false) delete config._isvalid; configfromrfc2822(config); final attempt, use input hooks.createfrominputfallback(config); hooks.createfrominputfallback="deprecate(" 'value provided not in recognized rfc2822 format. moment construction falls back to date(), 'which reliable across all browsers versions. non formats are 'discouraged will be removed upcoming major release. please refer 'http: momentjs.com guides # warnings js-date for more info.', (config) date(config._i (config._useutc ? utc' : '')); ); constant that refers standard hooks.iso_8601="function" () {}; rfc form hooks.rfc_2822="function" string configfromstringandformat(config) move this another part of creation flow prevent circular deps (config._f="==" hooks.iso_8601) hooks.rfc_2822) getparsingflags(config).empty="true;" array used make date, either `new date` `date.utc` config._i, i, tokens, token, skipped, stringlength="string.length," totalparsedinputlength="0;" tokens="expandFormat(config._f," config._locale).match(formattingtokens) || []; (i="0;" i tokens.length; i++) token="tokens[i];" parsedinput="(string.match(getParseRegexForToken(token," [])[0]; console.log('token', 'parsedinput', 'regex', getparseregexfortoken(token, config)); (parsedinput) skipped="string.substr(0," string.indexof(parsedinput)); (skipped.length> 0) {
+    if (year <= 49) {
+        return 2000 + year;
+    } else if (year <= 999) {
+        return 1900 + year;
+    }
+    return year;
+}
+
+function preprocessRFC2822(s) {
+    // Remove comments and folding whitespace and replace multiple-spaces with a single space
+    return s.replace(/\([^)]*\)|[\n\t]/g, ' ').replace(/(\s\s+)/g, ' ').trim();
+}
+
+function checkWeekday(weekdayStr, parsedInput, config) {
+    if (weekdayStr) {
+        // TODO: Replace the vanilla JS Date object with an indepentent day-of-week check.
+        var weekdayProvided = defaultLocaleWeekdaysShort.indexOf(weekdayStr),
+            weekdayActual = new Date(parsedInput[0], parsedInput[1], parsedInput[2]).getDay();
+        if (weekdayProvided !== weekdayActual) {
+            getParsingFlags(config).weekdayMismatch = true;
+            config._isValid = false;
+            return false;
+        }
+    }
+    return true;
+}
+
+var obsOffsets = {
+    UT: 0,
+    GMT: 0,
+    EDT: -4 * 60,
+    EST: -5 * 60,
+    CDT: -5 * 60,
+    CST: -6 * 60,
+    MDT: -6 * 60,
+    MST: -7 * 60,
+    PDT: -7 * 60,
+    PST: -8 * 60
+};
+
+function calculateOffset(obsOffset, militaryOffset, numOffset) {
+    if (obsOffset) {
+        return obsOffsets[obsOffset];
+    } else if (militaryOffset) {
+        // the only allowed military tz is Z
+        return 0;
+    } else {
+        var hm = parseInt(numOffset, 10);
+        var m = hm % 100, h = (hm - m) / 100;
+        return h * 60 + m;
+    }
+}
+
+// date and time from ref 2822 format
+function configFromRFC2822(config) {
+    var match = rfc2822.exec(preprocessRFC2822(config._i));
+    if (match) {
+        var parsedArray = extractFromRFC2822Strings(match[4], match[3], match[2], match[5], match[6], match[7]);
+        if (!checkWeekday(match[1], parsedArray, config)) {
+            return;
+        }
+
+        config._a = parsedArray;
+        config._tzm = calculateOffset(match[8], match[9], match[10]);
+
+        config._d = createUTCDate.apply(null, config._a);
+        config._d.setUTCMinutes(config._d.getUTCMinutes() - config._tzm);
+
+        getParsingFlags(config).rfc2822 = true;
+    } else {
+        config._isValid = false;
+    }
+}
+
+// date from iso format or fallback
+function configFromString(config) {
+    var matched = aspNetJsonRegex.exec(config._i);
+
+    if (matched !== null) {
+        config._d = new Date(+matched[1]);
+        return;
+    }
+
+    configFromISO(config);
+    if (config._isValid === false) {
+        delete config._isValid;
+    } else {
+        return;
+    }
+
+    configFromRFC2822(config);
+    if (config._isValid === false) {
+        delete config._isValid;
+    } else {
+        return;
+    }
+
+    // Final attempt, use Input Fallback
+    hooks.createFromInputFallback(config);
+}
+
+hooks.createFromInputFallback = deprecate(
+    'value provided is not in a recognized RFC2822 or ISO format. moment construction falls back to js Date(), ' +
+    'which is not reliable across all browsers and versions. Non RFC2822/ISO date formats are ' +
+    'discouraged and will be removed in an upcoming major release. Please refer to ' +
+    'http://momentjs.com/guides/#/warnings/js-date/ for more info.',
+    function (config) {
+        config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
+    }
+);
+
+// constant that refers to the ISO standard
+hooks.ISO_8601 = function () {};
+
+// constant that refers to the RFC 2822 form
+hooks.RFC_2822 = function () {};
+
+// date from string and format string
+function configFromStringAndFormat(config) {
+    // TODO: Move this to another part of the creation flow to prevent circular deps
+    if (config._f === hooks.ISO_8601) {
+        configFromISO(config);
+        return;
+    }
+    if (config._f === hooks.RFC_2822) {
+        configFromRFC2822(config);
+        return;
+    }
+    config._a = [];
+    getParsingFlags(config).empty = true;
+
+    // This array is used to make a Date, either with `new Date` or `Date.UTC`
+    var string = '' + config._i,
+        i, parsedInput, tokens, token, skipped,
+        stringLength = string.length,
+        totalParsedInputLength = 0;
+
+    tokens = expandFormat(config._f, config._locale).match(formattingTokens) || [];
+
+    for (i = 0; i < tokens.length; i++) {
+        token = tokens[i];
+        parsedInput = (string.match(getParseRegexForToken(token, config)) || [])[0];
+        // console.log('token', token, 'parsedInput', parsedInput,
+        //         'regex', getParseRegexForToken(token, config));
+        if (parsedInput) {
+            skipped = string.substr(0, string.indexOf(parsedInput));
+            if (skipped.length > 0) {
                 getParsingFlags(config).unusedInput.push(skipped);
             }
             string = string.slice(string.indexOf(parsedInput) + parsedInput.length);
@@ -2317,7 +2517,10 @@ function untruncateYear(yearStr) {
         getParsingFlags(config).unusedInput.push(string);
     }
 
-    // clear _12h flag if hour is <= 12 if (config._a[hour] <="12" && getparsingflags(config).bighour="==" true config._a[hour]> 0) {
+    // clear _12h flag if hour is <= 12
+    if (config._a[HOUR] <= 12 &&
+        getParsingFlags(config).bigHour === true &&
+        config._a[HOUR] > 0) {
         getParsingFlags(config).bigHour = undefined;
     }
 
@@ -3102,7 +3305,87 @@ function isSame (input, units) {
         return this.valueOf() === localInput.valueOf();
     } else {
         inputMs = localInput.valueOf();
-        return this.clone().startOf(units).valueOf() <= 0 1 24 60 1000 inputms && <="this.clone().endOf(units).valueOf();" } function issameorafter (input, units) { return this.issame(input, || this.isafter(input,units); issameorbefore this.isbefore(input,units); diff units, asfloat) var that, zonedelta, delta, output; if (!this.isvalid()) nan; that="cloneWithOffset(input," this); (!that.isvalid()) zonedelta="(that.utcOffset()" - this.utcoffset()) * 6e4; units="normalizeUnits(units);" switch (units) case 'year': output="monthDiff(this," that) 12; break; 'month': that); 'quarter': 3; 'second': 1e3; 'minute': 'hour': 36e5; 'day': zonedelta) 864e5; 24, negate dst 'week': 6048e5; 7, default: that; asfloat ? : absfloor(output); monthdiff (a, b) difference in months wholemonthdiff="((b.year()" a.year()) 12) + (b.month() a.month()), b is (anchor month, anchor month) 'months'), anchor2, adjust; (b 0) anchor2="a.clone().add(wholeMonthDiff" 1, 'months'); linear across the month adjust="(b" anchor) anchor2); else (anchor2 anchor); check for negative zero, zero -(wholemonthdiff adjust) 0; hooks.defaultformat="YYYY-MM-DDTHH:mm:ssZ" ; hooks.defaultformatutc="YYYY-MM-DDTHH:mm:ss[Z]" tostring () this.clone().locale('en').format('ddd mmm dd yyyy hh:mm:ss [gmt]zz'); toisostring(keepoffset) null; utc="keepOffset" !="=" true; m="utc" this.clone().utc() this; (m.year() m.year()> 9999) {
+        return this.clone().startOf(units).valueOf() <= inputMs && inputMs <= this.clone().endOf(units).valueOf();
+    }
+}
+
+function isSameOrAfter (input, units) {
+    return this.isSame(input, units) || this.isAfter(input,units);
+}
+
+function isSameOrBefore (input, units) {
+    return this.isSame(input, units) || this.isBefore(input,units);
+}
+
+function diff (input, units, asFloat) {
+    var that,
+        zoneDelta,
+        delta, output;
+
+    if (!this.isValid()) {
+        return NaN;
+    }
+
+    that = cloneWithOffset(input, this);
+
+    if (!that.isValid()) {
+        return NaN;
+    }
+
+    zoneDelta = (that.utcOffset() - this.utcOffset()) * 6e4;
+
+    units = normalizeUnits(units);
+
+    switch (units) {
+        case 'year': output = monthDiff(this, that) / 12; break;
+        case 'month': output = monthDiff(this, that); break;
+        case 'quarter': output = monthDiff(this, that) / 3; break;
+        case 'second': output = (this - that) / 1e3; break; // 1000
+        case 'minute': output = (this - that) / 6e4; break; // 1000 * 60
+        case 'hour': output = (this - that) / 36e5; break; // 1000 * 60 * 60
+        case 'day': output = (this - that - zoneDelta) / 864e5; break; // 1000 * 60 * 60 * 24, negate dst
+        case 'week': output = (this - that - zoneDelta) / 6048e5; break; // 1000 * 60 * 60 * 24 * 7, negate dst
+        default: output = this - that;
+    }
+
+    return asFloat ? output : absFloor(output);
+}
+
+function monthDiff (a, b) {
+    // difference in months
+    var wholeMonthDiff = ((b.year() - a.year()) * 12) + (b.month() - a.month()),
+        // b is in (anchor - 1 month, anchor + 1 month)
+        anchor = a.clone().add(wholeMonthDiff, 'months'),
+        anchor2, adjust;
+
+    if (b - anchor < 0) {
+        anchor2 = a.clone().add(wholeMonthDiff - 1, 'months');
+        // linear across the month
+        adjust = (b - anchor) / (anchor - anchor2);
+    } else {
+        anchor2 = a.clone().add(wholeMonthDiff + 1, 'months');
+        // linear across the month
+        adjust = (b - anchor) / (anchor2 - anchor);
+    }
+
+    //check for negative zero, return zero if negative zero
+    return -(wholeMonthDiff + adjust) || 0;
+}
+
+hooks.defaultFormat = 'YYYY-MM-DDTHH:mm:ssZ';
+hooks.defaultFormatUtc = 'YYYY-MM-DDTHH:mm:ss[Z]';
+
+function toString () {
+    return this.clone().locale('en').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
+}
+
+function toISOString(keepOffset) {
+    if (!this.isValid()) {
+        return null;
+    }
+    var utc = keepOffset !== true;
+    var m = utc ? this.clone().utc() : this;
+    if (m.year() < 0 || m.year() > 9999) {
         return formatMoment(m, utc ? 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]' : 'YYYYYY-MM-DD[T]HH:mm:ss.SSSZ');
     }
     if (isFunction(Date.prototype.toISOString)) {
@@ -3133,7 +3416,277 @@ function inspect () {
         zone = 'Z';
     }
     var prefix = '[' + func + '("]';
-    var year = (0 <= this.year() && <="9999)" ? 'yyyy' : 'yyyyyy'; var datetime="-MM-DD[T]HH:mm:ss.SSS" ; suffix="zone" + '[")]'; return this.format(prefix year suffix); } function format (inputstring) { if (!inputstring) inputstring="this.isUtc()" hooks.defaultformatutc hooks.defaultformat; output="formatMoment(this," inputstring); this.localedata().postformat(output); from (time, withoutsuffix) (this.isvalid() ((ismoment(time) time.isvalid()) || createlocal(time).isvalid())) createduration({to: this, from: time}).locale(this.locale()).humanize(!withoutsuffix); else this.localedata().invaliddate(); fromnow (withoutsuffix) this.from(createlocal(), withoutsuffix); to createduration({from: to: tonow this.to(createlocal(), passed a locale key, it will set the for this instance. otherwise, configuration variables (key) newlocaledata; (key="==" undefined) this._locale._abbr; newlocaledata="getLocale(key);" (newlocaledata !="null)" this._locale="newLocaleData;" this; lang="deprecate(" 'moment().lang() is deprecated. instead, use moment().localedata() get language configuration. moment().locale() change languages.', this.localedata(); this.locale(key); ); localedata () this._locale; startof (units) units="normalizeUnits(units);" following switch intentionally omits break keywords utilize falling through cases. case 'year': this.month(0); * falls 'quarter': 'month': this.date(1); 'week': 'isoweek': 'day': 'date': this.hours(0); 'hour': this.minutes(0); 'minute': this.seconds(0); 'second': this.milliseconds(0); weeks are special (units="==" 'week') this.weekday(0); 'isoweek') this.isoweekday(1); quarters also 'quarter') this.month(math.floor(this.month() 3) 3); endof undefined 'millisecond') 'date' an alias 'day', so should be considered as such. 'date') this.startof(units).add(1, 'isoweek' 'week' units)).subtract(1, 'ms'); valueof this._d.valueof() - ((this._offset 0) 60000); unix math.floor(this.valueof() 1000); todate new date(this.valueof()); toarray m="this;" [m.year(), m.month(), m.date(), m.hour(), m.minute(), m.second(), m.millisecond()]; toobject years: m.year(), months: date: hours: m.hours(), minutes: m.minutes(), seconds: m.seconds(), milliseconds: m.milliseconds() }; tojson date(nan).tojson()="==" null this.isvalid() this.toisostring() null; isvalid$2 isvalid(this); parsingflags extend({}, getparsingflags(this)); invalidat getparsingflags(this).overflow; creationdata() input: this._i, format: this._f, locale: this._locale, isutc: this._isutc, strict: this._strict formatting addformattoken(0, ['gg', 2], 0, this.weekyear() % 100; }); this.isoweekyear() addweekyearformattoken (token, getter) [token, token.length], getter); addweekyearformattoken('gggg', 'weekyear'); addweekyearformattoken('ggggg', 'isoweekyear'); aliases addunitalias('weekyear', 'gg'); addunitalias('isoweekyear', priority addunitpriority('weekyear', 1); addunitpriority('isoweekyear', parsing addregextoken('g', matchsigned); addregextoken('gg', match1to2, match2); addregextoken('gggg', match1to4, match4); addregextoken('ggggg', match1to6, match6); addweekparsetoken(['gggg', 'ggggg', 'gggg', 'ggggg'], (input, week, config, token) week[token.substr(0, 2)]="toInt(input);" addweekparsetoken(['gg', 'gg'], week[token]="hooks.parseTwoDigitYear(input);" moments getsetweekyear (input) getsetweekyearhelper.call(this, input, this.week(), this.weekday(), this.localedata()._week.dow, this.localedata()._week.doy); getsetisoweekyear this.isoweek(), this.isoweekday(), 1, 4); getisoweeksinyear weeksinyear(this.year(), getweeksinyear weekinfo="this.localeData()._week;" weekinfo.dow, weekinfo.doy); getsetweekyearhelper(input, weekday, dow, doy) weekstarget; (input="=" null) weekofyear(this, doy).year; weekstarget="weeksInYear(input," doy); (week> weeksTarget) {
+    var year = (0 <= this.year() && this.year() <= 9999) ? 'YYYY' : 'YYYYYY';
+    var datetime = '-MM-DD[T]HH:mm:ss.SSS';
+    var suffix = zone + '[")]';
+
+    return this.format(prefix + year + datetime + suffix);
+}
+
+function format (inputString) {
+    if (!inputString) {
+        inputString = this.isUtc() ? hooks.defaultFormatUtc : hooks.defaultFormat;
+    }
+    var output = formatMoment(this, inputString);
+    return this.localeData().postformat(output);
+}
+
+function from (time, withoutSuffix) {
+    if (this.isValid() &&
+            ((isMoment(time) && time.isValid()) ||
+             createLocal(time).isValid())) {
+        return createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
+    } else {
+        return this.localeData().invalidDate();
+    }
+}
+
+function fromNow (withoutSuffix) {
+    return this.from(createLocal(), withoutSuffix);
+}
+
+function to (time, withoutSuffix) {
+    if (this.isValid() &&
+            ((isMoment(time) && time.isValid()) ||
+             createLocal(time).isValid())) {
+        return createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
+    } else {
+        return this.localeData().invalidDate();
+    }
+}
+
+function toNow (withoutSuffix) {
+    return this.to(createLocal(), withoutSuffix);
+}
+
+// If passed a locale key, it will set the locale for this
+// instance.  Otherwise, it will return the locale configuration
+// variables for this instance.
+function locale (key) {
+    var newLocaleData;
+
+    if (key === undefined) {
+        return this._locale._abbr;
+    } else {
+        newLocaleData = getLocale(key);
+        if (newLocaleData != null) {
+            this._locale = newLocaleData;
+        }
+        return this;
+    }
+}
+
+var lang = deprecate(
+    'moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.',
+    function (key) {
+        if (key === undefined) {
+            return this.localeData();
+        } else {
+            return this.locale(key);
+        }
+    }
+);
+
+function localeData () {
+    return this._locale;
+}
+
+function startOf (units) {
+    units = normalizeUnits(units);
+    // the following switch intentionally omits break keywords
+    // to utilize falling through the cases.
+    switch (units) {
+        case 'year':
+            this.month(0);
+            /* falls through */
+        case 'quarter':
+        case 'month':
+            this.date(1);
+            /* falls through */
+        case 'week':
+        case 'isoWeek':
+        case 'day':
+        case 'date':
+            this.hours(0);
+            /* falls through */
+        case 'hour':
+            this.minutes(0);
+            /* falls through */
+        case 'minute':
+            this.seconds(0);
+            /* falls through */
+        case 'second':
+            this.milliseconds(0);
+    }
+
+    // weeks are a special case
+    if (units === 'week') {
+        this.weekday(0);
+    }
+    if (units === 'isoWeek') {
+        this.isoWeekday(1);
+    }
+
+    // quarters are also special
+    if (units === 'quarter') {
+        this.month(Math.floor(this.month() / 3) * 3);
+    }
+
+    return this;
+}
+
+function endOf (units) {
+    units = normalizeUnits(units);
+    if (units === undefined || units === 'millisecond') {
+        return this;
+    }
+
+    // 'date' is an alias for 'day', so it should be considered as such.
+    if (units === 'date') {
+        units = 'day';
+    }
+
+    return this.startOf(units).add(1, (units === 'isoWeek' ? 'week' : units)).subtract(1, 'ms');
+}
+
+function valueOf () {
+    return this._d.valueOf() - ((this._offset || 0) * 60000);
+}
+
+function unix () {
+    return Math.floor(this.valueOf() / 1000);
+}
+
+function toDate () {
+    return new Date(this.valueOf());
+}
+
+function toArray () {
+    var m = this;
+    return [m.year(), m.month(), m.date(), m.hour(), m.minute(), m.second(), m.millisecond()];
+}
+
+function toObject () {
+    var m = this;
+    return {
+        years: m.year(),
+        months: m.month(),
+        date: m.date(),
+        hours: m.hours(),
+        minutes: m.minutes(),
+        seconds: m.seconds(),
+        milliseconds: m.milliseconds()
+    };
+}
+
+function toJSON () {
+    // new Date(NaN).toJSON() === null
+    return this.isValid() ? this.toISOString() : null;
+}
+
+function isValid$2 () {
+    return isValid(this);
+}
+
+function parsingFlags () {
+    return extend({}, getParsingFlags(this));
+}
+
+function invalidAt () {
+    return getParsingFlags(this).overflow;
+}
+
+function creationData() {
+    return {
+        input: this._i,
+        format: this._f,
+        locale: this._locale,
+        isUTC: this._isUTC,
+        strict: this._strict
+    };
+}
+
+// FORMATTING
+
+addFormatToken(0, ['gg', 2], 0, function () {
+    return this.weekYear() % 100;
+});
+
+addFormatToken(0, ['GG', 2], 0, function () {
+    return this.isoWeekYear() % 100;
+});
+
+function addWeekYearFormatToken (token, getter) {
+    addFormatToken(0, [token, token.length], 0, getter);
+}
+
+addWeekYearFormatToken('gggg',     'weekYear');
+addWeekYearFormatToken('ggggg',    'weekYear');
+addWeekYearFormatToken('GGGG',  'isoWeekYear');
+addWeekYearFormatToken('GGGGG', 'isoWeekYear');
+
+// ALIASES
+
+addUnitAlias('weekYear', 'gg');
+addUnitAlias('isoWeekYear', 'GG');
+
+// PRIORITY
+
+addUnitPriority('weekYear', 1);
+addUnitPriority('isoWeekYear', 1);
+
+
+// PARSING
+
+addRegexToken('G',      matchSigned);
+addRegexToken('g',      matchSigned);
+addRegexToken('GG',     match1to2, match2);
+addRegexToken('gg',     match1to2, match2);
+addRegexToken('GGGG',   match1to4, match4);
+addRegexToken('gggg',   match1to4, match4);
+addRegexToken('GGGGG',  match1to6, match6);
+addRegexToken('ggggg',  match1to6, match6);
+
+addWeekParseToken(['gggg', 'ggggg', 'GGGG', 'GGGGG'], function (input, week, config, token) {
+    week[token.substr(0, 2)] = toInt(input);
+});
+
+addWeekParseToken(['gg', 'GG'], function (input, week, config, token) {
+    week[token] = hooks.parseTwoDigitYear(input);
+});
+
+// MOMENTS
+
+function getSetWeekYear (input) {
+    return getSetWeekYearHelper.call(this,
+            input,
+            this.week(),
+            this.weekday(),
+            this.localeData()._week.dow,
+            this.localeData()._week.doy);
+}
+
+function getSetISOWeekYear (input) {
+    return getSetWeekYearHelper.call(this,
+            input, this.isoWeek(), this.isoWeekday(), 1, 4);
+}
+
+function getISOWeeksInYear () {
+    return weeksInYear(this.year(), 1, 4);
+}
+
+function getWeeksInYear () {
+    var weekInfo = this.localeData()._week;
+    return weeksInYear(this.year(), weekInfo.dow, weekInfo.doy);
+}
+
+function getSetWeekYearHelper(input, week, weekday, dow, doy) {
+    var weeksTarget;
+    if (input == null) {
+        return weekOfYear(this, dow, doy).year;
+    } else {
+        weeksTarget = weeksInYear(input, dow, doy);
+        if (week > weeksTarget) {
             week = weeksTarget;
         }
         return setWeekAll.call(this, input, week, weekday, dow, doy);
@@ -3324,8 +3877,380 @@ addRegexToken('SS',   match1to3, match2);
 addRegexToken('SSS',  match1to3, match3);
 
 var token;
-for (token = 'SSSS'; token.length <= 100 2166 9; token +="S" ) { addregextoken(token, matchunsigned); } function parsems(input, array) array[millisecond]="toInt(('0.'" input) * 1000); for (token="S" ; token.length <="9;" addparsetoken(token, parsems); moments var getsetmillisecond="makeGetSet('Milliseconds'," false); formatting addformattoken('z', 0, 'zoneabbr'); addformattoken('zz', 'zonename'); getzoneabbr () return this._isutc ? 'utc' : ''; getzonename 'coordinated universal time' proto="Moment.prototype;" proto.add="add;" proto.calendar="calendar$1;" proto.clone="clone;" proto.diff="diff;" proto.endof="endOf;" proto.format="format;" proto.from="from;" proto.fromnow="fromNow;" proto.to="to;" proto.tonow="toNow;" proto.get="stringGet;" proto.invalidat="invalidAt;" proto.isafter="isAfter;" proto.isbefore="isBefore;" proto.isbetween="isBetween;" proto.issame="isSame;" proto.issameorafter="isSameOrAfter;" proto.issameorbefore="isSameOrBefore;" proto.isvalid="isValid$2;" proto.lang="lang;" proto.locale="locale;" proto.localedata="localeData;" proto.max="prototypeMax;" proto.min="prototypeMin;" proto.parsingflags="parsingFlags;" proto.set="stringSet;" proto.startof="startOf;" proto.subtract="subtract;" proto.toarray="toArray;" proto.toobject="toObject;" proto.todate="toDate;" proto.toisostring="toISOString;" proto.inspect="inspect;" proto.tojson="toJSON;" proto.tostring="toString;" proto.unix="unix;" proto.valueof="valueOf;" proto.creationdata="creationData;" year proto.year="getSetYear;" proto.isleapyear="getIsLeapYear;" week proto.weekyear="getSetWeekYear;" proto.isoweekyear="getSetISOWeekYear;" quarter proto.quarter="proto.quarters" = getsetquarter; month proto.month="getSetMonth;" proto.daysinmonth="getDaysInMonth;" proto.week="proto.weeks" getsetweek; proto.isoweek="proto.isoWeeks" getsetisoweek; proto.weeksinyear="getWeeksInYear;" proto.isoweeksinyear="getISOWeeksInYear;" day proto.date="getSetDayOfMonth;" proto.day="proto.days" getsetdayofweek; proto.weekday="getSetLocaleDayOfWeek;" proto.isoweekday="getSetISODayOfWeek;" proto.dayofyear="getSetDayOfYear;" hour proto.hour="proto.hours" getsethour; minute proto.minute="proto.minutes" getsetminute; second proto.second="proto.seconds" getsetsecond; millisecond proto.millisecond="proto.milliseconds" getsetmillisecond; offset proto.utcoffset="getSetOffset;" proto.utc="setOffsetToUTC;" proto.local="setOffsetToLocal;" proto.parsezone="setOffsetToParsedOffset;" proto.hasalignedhouroffset="hasAlignedHourOffset;" proto.isdst="isDaylightSavingTime;" proto.islocal="isLocal;" proto.isutcoffset="isUtcOffset;" proto.isutc="isUtc;" timezone proto.zoneabbr="getZoneAbbr;" proto.zonename="getZoneName;" deprecations proto.dates="deprecate('dates" accessor is deprecated. use date instead.', getsetdayofmonth); proto.months="deprecate('months" instead', getsetmonth); proto.years="deprecate('years" getsetyear); proto.zone="deprecate('moment().zone" deprecated, moment().utcoffset instead. http: momentjs.com guides # warnings zone ', getsetzone); proto.isdstshifted="deprecate('isDSTShifted" see dst-shifted more information', isdaylightsavingtimeshifted); createunix (input) createlocal(input createinzone createlocal.apply(null, arguments).parsezone(); preparsepostformat (string) string; proto$1="Locale.prototype;" proto$1.calendar="calendar;" proto$1.longdateformat="longDateFormat;" proto$1.invaliddate="invalidDate;" proto$1.ordinal="ordinal;" proto$1.preparse="preParsePostFormat;" proto$1.postformat="preParsePostFormat;" proto$1.relativetime="relativeTime;" proto$1.pastfuture="pastFuture;" proto$1.set="set;" proto$1.months="localeMonths;" proto$1.monthsshort="localeMonthsShort;" proto$1.monthsparse="localeMonthsParse;" proto$1.monthsregex="monthsRegex;" proto$1.monthsshortregex="monthsShortRegex;" proto$1.week="localeWeek;" proto$1.firstdayofyear="localeFirstDayOfYear;" proto$1.firstdayofweek="localeFirstDayOfWeek;" of proto$1.weekdays="localeWeekdays;" proto$1.weekdaysmin="localeWeekdaysMin;" proto$1.weekdaysshort="localeWeekdaysShort;" proto$1.weekdaysparse="localeWeekdaysParse;" proto$1.weekdaysregex="weekdaysRegex;" proto$1.weekdaysshortregex="weekdaysShortRegex;" proto$1.weekdaysminregex="weekdaysMinRegex;" hours proto$1.ispm="localeIsPM;" proto$1.meridiem="localeMeridiem;" get$1 (format, index, field, setter) locale="getLocale();" utc="createUTC().set(setter," index); locale[field](utc, format); listmonthsimpl field) if (isnumber(format)) index="format;" format="undefined;" || (index !="null)" get$1(format, 'month'); i; out="[];" (i="0;" i 12; i++) out[i]="get$1(format," i, out; (5) (fmt, 5) (fmt) (true) (true, fmt, fmt) listweekdaysimpl (localesorted, format, (typeof localesorted="==" 'boolean') else shift="localeSorted" locale._week.dow 0; shift) % 7, 'day'); 7; listmonths index) listmonthsimpl(format, 'months'); listmonthsshort 'monthsshort'); listweekdays listweekdaysimpl(localesorted, 'weekdays'); listweekdaysshort 'weekdaysshort'); listweekdaysmin 'weekdaysmin'); getsetgloballocale('en', dayofmonthordinalparse: \d{1,2}(th|st|nd|rd) , ordinal (number) b="number" 10, output="(toInt(number" 10)="==" 1) 'th' (b="==" 'st' 2) 'nd' 3) 'rd' 'th'; number output; }); side effect imports hooks.lang="deprecate('moment.lang" moment.locale getsetgloballocale); hooks.langdata="deprecate('moment.langData" moment.localedata getlocale); mathabs="Math.abs;" abs data="this._data;" this._milliseconds="mathAbs(this._milliseconds);" this._days="mathAbs(this._days);" this._months="mathAbs(this._months);" data.milliseconds="mathAbs(data.milliseconds);" data.seconds="mathAbs(data.seconds);" data.minutes="mathAbs(data.minutes);" data.hours="mathAbs(data.hours);" data.months="mathAbs(data.months);" data.years="mathAbs(data.years);" this; addsubtract$1 (duration, input, value, direction) other="createDuration(input," value); duration._milliseconds other._milliseconds; duration._days other._days; duration._months other._months; duration._bubble(); supports only 2.0-style add(1, 's') or add(duration) add$1 (input, value) addsubtract$1(this, 1); subtract(1, subtract(duration) subtract$1 -1); absceil (number 0) math.floor(number); math.ceil(number); bubble milliseconds="this._milliseconds;" days="this._days;" months="this._months;" seconds, minutes, hours, years, monthsfromdays; we have a mix positive and negative values, down first check: https: github.com moment issues (!((milliseconds>= 0 && days >= 0 && months >= 0) ||
-            (milliseconds <= 0 12 && days <="0" months { milliseconds +="absCeil(monthsToDays(months)" days) * 864e5; } the following code bubbles up values, see tests for examples of what that means. data.milliseconds="milliseconds" % 1000; seconds="absFloor(milliseconds" 1000); data.seconds="seconds" 60; minutes="absFloor(seconds" 60); data.minutes="minutes" hours="absFloor(minutes" data.hours="hours" 24; 24); convert to monthsfromdays="absFloor(daysToMonths(days));" -="absCeil(monthsToDays(monthsFromDays));"> 1 year
+for (token = 'SSSS'; token.length <= 9; token += 'S') {
+    addRegexToken(token, matchUnsigned);
+}
+
+function parseMs(input, array) {
+    array[MILLISECOND] = toInt(('0.' + input) * 1000);
+}
+
+for (token = 'S'; token.length <= 9; token += 'S') {
+    addParseToken(token, parseMs);
+}
+// MOMENTS
+
+var getSetMillisecond = makeGetSet('Milliseconds', false);
+
+// FORMATTING
+
+addFormatToken('z',  0, 0, 'zoneAbbr');
+addFormatToken('zz', 0, 0, 'zoneName');
+
+// MOMENTS
+
+function getZoneAbbr () {
+    return this._isUTC ? 'UTC' : '';
+}
+
+function getZoneName () {
+    return this._isUTC ? 'Coordinated Universal Time' : '';
+}
+
+var proto = Moment.prototype;
+
+proto.add               = add;
+proto.calendar          = calendar$1;
+proto.clone             = clone;
+proto.diff              = diff;
+proto.endOf             = endOf;
+proto.format            = format;
+proto.from              = from;
+proto.fromNow           = fromNow;
+proto.to                = to;
+proto.toNow             = toNow;
+proto.get               = stringGet;
+proto.invalidAt         = invalidAt;
+proto.isAfter           = isAfter;
+proto.isBefore          = isBefore;
+proto.isBetween         = isBetween;
+proto.isSame            = isSame;
+proto.isSameOrAfter     = isSameOrAfter;
+proto.isSameOrBefore    = isSameOrBefore;
+proto.isValid           = isValid$2;
+proto.lang              = lang;
+proto.locale            = locale;
+proto.localeData        = localeData;
+proto.max               = prototypeMax;
+proto.min               = prototypeMin;
+proto.parsingFlags      = parsingFlags;
+proto.set               = stringSet;
+proto.startOf           = startOf;
+proto.subtract          = subtract;
+proto.toArray           = toArray;
+proto.toObject          = toObject;
+proto.toDate            = toDate;
+proto.toISOString       = toISOString;
+proto.inspect           = inspect;
+proto.toJSON            = toJSON;
+proto.toString          = toString;
+proto.unix              = unix;
+proto.valueOf           = valueOf;
+proto.creationData      = creationData;
+
+// Year
+proto.year       = getSetYear;
+proto.isLeapYear = getIsLeapYear;
+
+// Week Year
+proto.weekYear    = getSetWeekYear;
+proto.isoWeekYear = getSetISOWeekYear;
+
+// Quarter
+proto.quarter = proto.quarters = getSetQuarter;
+
+// Month
+proto.month       = getSetMonth;
+proto.daysInMonth = getDaysInMonth;
+
+// Week
+proto.week           = proto.weeks        = getSetWeek;
+proto.isoWeek        = proto.isoWeeks     = getSetISOWeek;
+proto.weeksInYear    = getWeeksInYear;
+proto.isoWeeksInYear = getISOWeeksInYear;
+
+// Day
+proto.date       = getSetDayOfMonth;
+proto.day        = proto.days             = getSetDayOfWeek;
+proto.weekday    = getSetLocaleDayOfWeek;
+proto.isoWeekday = getSetISODayOfWeek;
+proto.dayOfYear  = getSetDayOfYear;
+
+// Hour
+proto.hour = proto.hours = getSetHour;
+
+// Minute
+proto.minute = proto.minutes = getSetMinute;
+
+// Second
+proto.second = proto.seconds = getSetSecond;
+
+// Millisecond
+proto.millisecond = proto.milliseconds = getSetMillisecond;
+
+// Offset
+proto.utcOffset            = getSetOffset;
+proto.utc                  = setOffsetToUTC;
+proto.local                = setOffsetToLocal;
+proto.parseZone            = setOffsetToParsedOffset;
+proto.hasAlignedHourOffset = hasAlignedHourOffset;
+proto.isDST                = isDaylightSavingTime;
+proto.isLocal              = isLocal;
+proto.isUtcOffset          = isUtcOffset;
+proto.isUtc                = isUtc;
+proto.isUTC                = isUtc;
+
+// Timezone
+proto.zoneAbbr = getZoneAbbr;
+proto.zoneName = getZoneName;
+
+// Deprecations
+proto.dates  = deprecate('dates accessor is deprecated. Use date instead.', getSetDayOfMonth);
+proto.months = deprecate('months accessor is deprecated. Use month instead', getSetMonth);
+proto.years  = deprecate('years accessor is deprecated. Use year instead', getSetYear);
+proto.zone   = deprecate('moment().zone is deprecated, use moment().utcOffset instead. http://momentjs.com/guides/#/warnings/zone/', getSetZone);
+proto.isDSTShifted = deprecate('isDSTShifted is deprecated. See http://momentjs.com/guides/#/warnings/dst-shifted/ for more information', isDaylightSavingTimeShifted);
+
+function createUnix (input) {
+    return createLocal(input * 1000);
+}
+
+function createInZone () {
+    return createLocal.apply(null, arguments).parseZone();
+}
+
+function preParsePostFormat (string) {
+    return string;
+}
+
+var proto$1 = Locale.prototype;
+
+proto$1.calendar        = calendar;
+proto$1.longDateFormat  = longDateFormat;
+proto$1.invalidDate     = invalidDate;
+proto$1.ordinal         = ordinal;
+proto$1.preparse        = preParsePostFormat;
+proto$1.postformat      = preParsePostFormat;
+proto$1.relativeTime    = relativeTime;
+proto$1.pastFuture      = pastFuture;
+proto$1.set             = set;
+
+// Month
+proto$1.months            =        localeMonths;
+proto$1.monthsShort       =        localeMonthsShort;
+proto$1.monthsParse       =        localeMonthsParse;
+proto$1.monthsRegex       = monthsRegex;
+proto$1.monthsShortRegex  = monthsShortRegex;
+
+// Week
+proto$1.week = localeWeek;
+proto$1.firstDayOfYear = localeFirstDayOfYear;
+proto$1.firstDayOfWeek = localeFirstDayOfWeek;
+
+// Day of Week
+proto$1.weekdays       =        localeWeekdays;
+proto$1.weekdaysMin    =        localeWeekdaysMin;
+proto$1.weekdaysShort  =        localeWeekdaysShort;
+proto$1.weekdaysParse  =        localeWeekdaysParse;
+
+proto$1.weekdaysRegex       =        weekdaysRegex;
+proto$1.weekdaysShortRegex  =        weekdaysShortRegex;
+proto$1.weekdaysMinRegex    =        weekdaysMinRegex;
+
+// Hours
+proto$1.isPM = localeIsPM;
+proto$1.meridiem = localeMeridiem;
+
+function get$1 (format, index, field, setter) {
+    var locale = getLocale();
+    var utc = createUTC().set(setter, index);
+    return locale[field](utc, format);
+}
+
+function listMonthsImpl (format, index, field) {
+    if (isNumber(format)) {
+        index = format;
+        format = undefined;
+    }
+
+    format = format || '';
+
+    if (index != null) {
+        return get$1(format, index, field, 'month');
+    }
+
+    var i;
+    var out = [];
+    for (i = 0; i < 12; i++) {
+        out[i] = get$1(format, i, field, 'month');
+    }
+    return out;
+}
+
+// ()
+// (5)
+// (fmt, 5)
+// (fmt)
+// (true)
+// (true, 5)
+// (true, fmt, 5)
+// (true, fmt)
+function listWeekdaysImpl (localeSorted, format, index, field) {
+    if (typeof localeSorted === 'boolean') {
+        if (isNumber(format)) {
+            index = format;
+            format = undefined;
+        }
+
+        format = format || '';
+    } else {
+        format = localeSorted;
+        index = format;
+        localeSorted = false;
+
+        if (isNumber(format)) {
+            index = format;
+            format = undefined;
+        }
+
+        format = format || '';
+    }
+
+    var locale = getLocale(),
+        shift = localeSorted ? locale._week.dow : 0;
+
+    if (index != null) {
+        return get$1(format, (index + shift) % 7, field, 'day');
+    }
+
+    var i;
+    var out = [];
+    for (i = 0; i < 7; i++) {
+        out[i] = get$1(format, (i + shift) % 7, field, 'day');
+    }
+    return out;
+}
+
+function listMonths (format, index) {
+    return listMonthsImpl(format, index, 'months');
+}
+
+function listMonthsShort (format, index) {
+    return listMonthsImpl(format, index, 'monthsShort');
+}
+
+function listWeekdays (localeSorted, format, index) {
+    return listWeekdaysImpl(localeSorted, format, index, 'weekdays');
+}
+
+function listWeekdaysShort (localeSorted, format, index) {
+    return listWeekdaysImpl(localeSorted, format, index, 'weekdaysShort');
+}
+
+function listWeekdaysMin (localeSorted, format, index) {
+    return listWeekdaysImpl(localeSorted, format, index, 'weekdaysMin');
+}
+
+getSetGlobalLocale('en', {
+    dayOfMonthOrdinalParse: /\d{1,2}(th|st|nd|rd)/,
+    ordinal : function (number) {
+        var b = number % 10,
+            output = (toInt(number % 100 / 10) === 1) ? 'th' :
+            (b === 1) ? 'st' :
+            (b === 2) ? 'nd' :
+            (b === 3) ? 'rd' : 'th';
+        return number + output;
+    }
+});
+
+// Side effect imports
+hooks.lang = deprecate('moment.lang is deprecated. Use moment.locale instead.', getSetGlobalLocale);
+hooks.langData = deprecate('moment.langData is deprecated. Use moment.localeData instead.', getLocale);
+
+var mathAbs = Math.abs;
+
+function abs () {
+    var data           = this._data;
+
+    this._milliseconds = mathAbs(this._milliseconds);
+    this._days         = mathAbs(this._days);
+    this._months       = mathAbs(this._months);
+
+    data.milliseconds  = mathAbs(data.milliseconds);
+    data.seconds       = mathAbs(data.seconds);
+    data.minutes       = mathAbs(data.minutes);
+    data.hours         = mathAbs(data.hours);
+    data.months        = mathAbs(data.months);
+    data.years         = mathAbs(data.years);
+
+    return this;
+}
+
+function addSubtract$1 (duration, input, value, direction) {
+    var other = createDuration(input, value);
+
+    duration._milliseconds += direction * other._milliseconds;
+    duration._days         += direction * other._days;
+    duration._months       += direction * other._months;
+
+    return duration._bubble();
+}
+
+// supports only 2.0-style add(1, 's') or add(duration)
+function add$1 (input, value) {
+    return addSubtract$1(this, input, value, 1);
+}
+
+// supports only 2.0-style subtract(1, 's') or subtract(duration)
+function subtract$1 (input, value) {
+    return addSubtract$1(this, input, value, -1);
+}
+
+function absCeil (number) {
+    if (number < 0) {
+        return Math.floor(number);
+    } else {
+        return Math.ceil(number);
+    }
+}
+
+function bubble () {
+    var milliseconds = this._milliseconds;
+    var days         = this._days;
+    var months       = this._months;
+    var data         = this._data;
+    var seconds, minutes, hours, years, monthsFromDays;
+
+    // if we have a mix of positive and negative values, bubble down first
+    // check: https://github.com/moment/moment/issues/2166
+    if (!((milliseconds >= 0 && days >= 0 && months >= 0) ||
+            (milliseconds <= 0 && days <= 0 && months <= 0))) {
+        milliseconds += absCeil(monthsToDays(months) + days) * 864e5;
+        days = 0;
+        months = 0;
+    }
+
+    // The following code bubbles up values, see the tests for
+    // examples of what that means.
+    data.milliseconds = milliseconds % 1000;
+
+    seconds           = absFloor(milliseconds / 1000);
+    data.seconds      = seconds % 60;
+
+    minutes           = absFloor(seconds / 60);
+    data.minutes      = minutes % 60;
+
+    hours             = absFloor(minutes / 60);
+    data.hours        = hours % 24;
+
+    days += absFloor(hours / 24);
+
+    // convert days to months
+    monthsFromDays = absFloor(daysToMonths(days));
+    months += monthsFromDays;
+    days -= absCeil(monthsToDays(monthsFromDays));
+
+    // 12 months -> 1 year
     years = absFloor(months / 12);
     months %= 12;
 
@@ -3456,7 +4381,20 @@ function relativeTime$1 (posNegDuration, withoutSuffix, locale) {
     var months   = round(duration.as('M'));
     var years    = round(duration.as('y'));
 
-    var a = seconds <= thresholds.ss && ['s', seconds] || seconds < thresholds.s ['ss', minutes ['m'] thresholds.m ['mm', minutes] hours ['h'] thresholds.h ['hh', hours] days ['d'] thresholds.d ['dd', days] months months] years ['y'] ['yy', years]; a[2]="withoutSuffix;" a[3]="+posNegDuration"> 0;
+    var a = seconds <= thresholds.ss && ['s', seconds]  ||
+            seconds < thresholds.s   && ['ss', seconds] ||
+            minutes <= 1             && ['m']           ||
+            minutes < thresholds.m   && ['mm', minutes] ||
+            hours   <= 1             && ['h']           ||
+            hours   < thresholds.h   && ['hh', hours]   ||
+            days    <= 1             && ['d']           ||
+            days    < thresholds.d   && ['dd', days]    ||
+            months  <= 1             && ['M']           ||
+            months  < thresholds.M   && ['MM', months]  ||
+            years   <= 1             && ['y']           || ['yy', years];
+
+    a[2] = withoutSuffix;
+    a[3] = +posNegDuration > 0;
     a[4] = locale;
     return substituteTimeAgo.apply(null, a);
 }
@@ -3660,15 +4598,15 @@ hooks.prototype             = proto;
 
 // currently HTML5 input type only supports 24-hour formats
 hooks.HTML5_FMT = {
-    DATETIME_LOCAL: 'YYYY-MM-DDTHH:mm',             // <input type="datetime-local">
-    DATETIME_LOCAL_SECONDS: 'YYYY-MM-DDTHH:mm:ss',  // <input type="datetime-local" step="1">
-    DATETIME_LOCAL_MS: 'YYYY-MM-DDTHH:mm:ss.SSS',   // <input type="datetime-local" step="0.001">
-    DATE: 'YYYY-MM-DD',                             // <input type="date">
-    TIME: 'HH:mm',                                  // <input type="time">
-    TIME_SECONDS: 'HH:mm:ss',                       // <input type="time" step="1">
-    TIME_MS: 'HH:mm:ss.SSS',                        // <input type="time" step="0.001">
-    WEEK: 'YYYY-[W]WW',                             // <input type="week">
-    MONTH: 'YYYY-MM'                                // <input type="month">
+    DATETIME_LOCAL: 'YYYY-MM-DDTHH:mm',             // <input type="datetime-local" />
+    DATETIME_LOCAL_SECONDS: 'YYYY-MM-DDTHH:mm:ss',  // <input type="datetime-local" step="1" />
+    DATETIME_LOCAL_MS: 'YYYY-MM-DDTHH:mm:ss.SSS',   // <input type="datetime-local" step="0.001" />
+    DATE: 'YYYY-MM-DD',                             // <input type="date" />
+    TIME: 'HH:mm',                                  // <input type="time" />
+    TIME_SECONDS: 'HH:mm:ss',                       // <input type="time" step="1" />
+    TIME_MS: 'HH:mm:ss.SSS',                        // <input type="time" step="0.001" />
+    WEEK: 'YYYY-[W]WW',                             // <input type="week" />
+    MONTH: 'YYYY-MM'                                // <input type="month" />
 };
 
 return hooks;
@@ -3717,7 +4655,45 @@ var setLogLevel = exports.setLogLevel = function setLogLevel(level) {
   logger.warn = function () {};
   logger.error = function () {};
   logger.fatal = function () {};
-  if (level <= 2 levels.fatal) { logger.fatal="console.log.bind(console," '\x1b[35m', format('fatal')); } if (level <="LEVELS.error)" logger.error="console.log.bind(console," '\x1b[31m', format('error')); logger.warn="console.log.bind(console," '\x1b[33m', format('warn')); logger.info="console.log.bind(console," '\x1b[34m', format('info')); logger.debug="console.log.bind(console," '\x1b[32m', format('debug')); }; var format="function" format(level) time="(0," _moment2.default)().format('hh:mm:ss.sss'); return + ' : level '; *** }), * (function(module, exports) ** checks `value` is classified as an `array` object. @static @memberof _ @since 0.1.0 @category lang @param {*} value the to check. @returns {boolean} returns `true` array, else `false`. @example _.isarray([1, 2, 3]); => true
+  if (level <= LEVELS.fatal) {
+    logger.fatal = console.log.bind(console, '\x1b[35m', format('FATAL'));
+  }
+  if (level <= LEVELS.error) {
+    logger.error = console.log.bind(console, '\x1b[31m', format('ERROR'));
+  }
+  if (level <= LEVELS.warn) {
+    logger.warn = console.log.bind(console, '\x1B[33m', format('WARN'));
+  }
+  if (level <= LEVELS.info) {
+    logger.info = console.log.bind(console, '\x1b[34m', format('INFO'));
+  }
+  if (level <= LEVELS.debug) {
+    logger.debug = console.log.bind(console, '\x1b[32m', format('DEBUG'));
+  }
+};
+
+var format = function format(level) {
+  var time = (0, _moment2.default)().format('HH:mm:ss.SSS');
+  return time + ' : ' + level + ' : ';
+};
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
  *
  * _.isArray(document.body.children);
  * // => false
@@ -4967,10 +5943,10 @@ module.exports = g;
 
 /* WEBPACK VAR INJECTION */(function(global, module) {/**
  * @license
- * Lodash <https: lodash.com>
- * Copyright JS Foundation and other contributors <https: js.foundation>
- * Released under MIT license <https: lodash.com license>
- * Based on Underscore.js 1.8.3 <http: underscorejs.org license>
+ * Lodash <https://lodash.com/>
+ * Copyright JS Foundation and other contributors <https://js.foundation/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 ;(function() {
@@ -5103,9 +6079,9 @@ module.exports = g;
       reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
 
   /** Used to match template delimiters. */
-  var reEscape = /<%-([\s\s]+?)%>/g,
-      reEvaluate = /<%([\s\s]+?)%>/g,
-      reInterpolate = /<%=([\s\s]+?)%>/g;
+  var reEscape = /<%-([\s\S]+?)%>/g,
+      reEvaluate = /<%([\s\S]+?)%>/g,
+      reInterpolate = /<%=([\s\S]+?)%>/g;
 
   /** Used to match property names within property paths. */
   var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
@@ -5351,7 +6327,8 @@ module.exports = g;
   /** Used to map characters to HTML entities. */
   var htmlEscapes = {
     '&': '&amp;',
-    '<': '&lt;', '>': '&gt;',
+    '<': '&lt;',
+    '>': '&gt;',
     '"': '&quot;',
     "'": '&#39;'
   };
@@ -5359,7 +6336,8 @@ module.exports = g;
   /** Used to map HTML entities to characters. */
   var htmlUnescapes = {
     '&amp;': '&',
-    '&lt;': '<', '&gt;': '>',
+    '&lt;': '<',
+    '&gt;': '>',
     '&quot;': '"',
     '&#39;': "'"
   };
@@ -7578,7 +8556,10 @@ module.exports = g;
     function baseClamp(number, lower, upper) {
       if (number === number) {
         if (upper !== undefined) {
-          number = number <= upper ? number : upper; } if (lower !="=" undefined) {>= lower ? number : lower;
+          number = number <= upper ? number : upper;
+        }
+        if (lower !== undefined) {
+          number = number >= lower ? number : lower;
         }
       }
       return number;
@@ -9071,11 +10052,167 @@ module.exports = g;
       var low = 0,
           high = array == null ? low : array.length;
 
-      if (typeof value == 'number' && value === value && high <= half_max_array_length) { while (low < high) var mid="(low" +>>> 1,
+      if (typeof value == 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
+        while (low < high) {
+          var mid = (low + high) >>> 1,
               computed = array[mid];
 
           if (computed !== null && !isSymbol(computed) &&
-              (retHighest ? (computed <= 0 value) : (computed < value))) { low="mid" + 1; } else high="mid;" return high; basesortedindexby(array, value, identity, rethighest); ** * the base implementation of `_.sortedindexby` and `_.sortedlastindexby` which invokes `iteratee` for `value` each element `array` to compute their sort ranking. iteratee is invoked with one argument; (value). @private @param {array} array sorted inspect. {*} value evaluate. {function} per element. {boolean} [rethighest] specify returning highest qualified index. @returns {number} returns index at should be inserted into `array`. function iteratee, rethighest) var =="null" ? array.length, valisnan="value" !="=" valisnull="value" null, valissymbol="isSymbol(value)," valisundefined="value" undefined; while (low high) mid="nativeFloor((low" 2), computed="iteratee(array[mid])," othisdefined="computed" undefined, othisnull="computed" othisreflexive="computed" computed, othissymbol="isSymbol(computed);" if (valisnan) setlow="retHighest" || othisreflexive; (valisundefined) && (rethighest othisdefined); (valisnull) !othisnull); (valissymbol) !othisnull !othissymbol); (othisnull othissymbol) value); (setlow) nativemin(high, max_array_index); `_.sorteduniq` `_.sorteduniqby` without support shorthands. [iteratee] new duplicate free array. basesorteduniq(array, iteratee) length="array.length," resindex="0," result="[];" (++index length) iteratee(value) value; (!index !eq(computed, seen)) seen="computed;" result[resindex++]="value" result; `_.tonumber` doesn't ensure correct conversions binary, hexadecimal, or octal string values. process. number. basetonumber(value) (typeof 'number') (issymbol(value)) nan; +value; `_.tostring` convert nullish values empty strings. {string} string. basetostring(value) exit early strings avoid a performance hit in some environments. 'string') (isarray(value)) recursively (susceptible call stack limits). arraymap(value, basetostring) ''; symboltostring symboltostring.call(value) ''); (result="=" '0' (1 -infinity) '-0' `_.uniqby` [comparator] comparator baseuniq(array, comparator) includes="arrayIncludes," iscommon="true," (comparator) (length>= LARGE_ARRAY_SIZE) {
+              (retHighest ? (computed <= value) : (computed < value))) {
+            low = mid + 1;
+          } else {
+            high = mid;
+          }
+        }
+        return high;
+      }
+      return baseSortedIndexBy(array, value, identity, retHighest);
+    }
+
+    /**
+     * The base implementation of `_.sortedIndexBy` and `_.sortedLastIndexBy`
+     * which invokes `iteratee` for `value` and each element of `array` to compute
+     * their sort ranking. The iteratee is invoked with one argument; (value).
+     *
+     * @private
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to evaluate.
+     * @param {Function} iteratee The iteratee invoked per element.
+     * @param {boolean} [retHighest] Specify returning the highest qualified index.
+     * @returns {number} Returns the index at which `value` should be inserted
+     *  into `array`.
+     */
+    function baseSortedIndexBy(array, value, iteratee, retHighest) {
+      value = iteratee(value);
+
+      var low = 0,
+          high = array == null ? 0 : array.length,
+          valIsNaN = value !== value,
+          valIsNull = value === null,
+          valIsSymbol = isSymbol(value),
+          valIsUndefined = value === undefined;
+
+      while (low < high) {
+        var mid = nativeFloor((low + high) / 2),
+            computed = iteratee(array[mid]),
+            othIsDefined = computed !== undefined,
+            othIsNull = computed === null,
+            othIsReflexive = computed === computed,
+            othIsSymbol = isSymbol(computed);
+
+        if (valIsNaN) {
+          var setLow = retHighest || othIsReflexive;
+        } else if (valIsUndefined) {
+          setLow = othIsReflexive && (retHighest || othIsDefined);
+        } else if (valIsNull) {
+          setLow = othIsReflexive && othIsDefined && (retHighest || !othIsNull);
+        } else if (valIsSymbol) {
+          setLow = othIsReflexive && othIsDefined && !othIsNull && (retHighest || !othIsSymbol);
+        } else if (othIsNull || othIsSymbol) {
+          setLow = false;
+        } else {
+          setLow = retHighest ? (computed <= value) : (computed < value);
+        }
+        if (setLow) {
+          low = mid + 1;
+        } else {
+          high = mid;
+        }
+      }
+      return nativeMin(high, MAX_ARRAY_INDEX);
+    }
+
+    /**
+     * The base implementation of `_.sortedUniq` and `_.sortedUniqBy` without
+     * support for iteratee shorthands.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @param {Function} [iteratee] The iteratee invoked per element.
+     * @returns {Array} Returns the new duplicate free array.
+     */
+    function baseSortedUniq(array, iteratee) {
+      var index = -1,
+          length = array.length,
+          resIndex = 0,
+          result = [];
+
+      while (++index < length) {
+        var value = array[index],
+            computed = iteratee ? iteratee(value) : value;
+
+        if (!index || !eq(computed, seen)) {
+          var seen = computed;
+          result[resIndex++] = value === 0 ? 0 : value;
+        }
+      }
+      return result;
+    }
+
+    /**
+     * The base implementation of `_.toNumber` which doesn't ensure correct
+     * conversions of binary, hexadecimal, or octal string values.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {number} Returns the number.
+     */
+    function baseToNumber(value) {
+      if (typeof value == 'number') {
+        return value;
+      }
+      if (isSymbol(value)) {
+        return NAN;
+      }
+      return +value;
+    }
+
+    /**
+     * The base implementation of `_.toString` which doesn't convert nullish
+     * values to empty strings.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {string} Returns the string.
+     */
+    function baseToString(value) {
+      // Exit early for strings to avoid a performance hit in some environments.
+      if (typeof value == 'string') {
+        return value;
+      }
+      if (isArray(value)) {
+        // Recursively convert values (susceptible to call stack limits).
+        return arrayMap(value, baseToString) + '';
+      }
+      if (isSymbol(value)) {
+        return symbolToString ? symbolToString.call(value) : '';
+      }
+      var result = (value + '');
+      return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+    }
+
+    /**
+     * The base implementation of `_.uniqBy` without support for iteratee shorthands.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @param {Function} [iteratee] The iteratee invoked per element.
+     * @param {Function} [comparator] The comparator invoked per element.
+     * @returns {Array} Returns the new duplicate free array.
+     */
+    function baseUniq(array, iteratee, comparator) {
+      var index = -1,
+          includes = arrayIncludes,
+          length = array.length,
+          isCommon = true,
+          result = [],
+          seen = result;
+
+      if (comparator) {
+        isCommon = false;
+        includes = arrayIncludesWith;
+      }
+      else if (length >= LARGE_ARRAY_SIZE) {
         var set = iteratee ? null : createSet(array);
         if (set) {
           return setToArray(set);
@@ -11300,7 +12437,219 @@ module.exports = g;
 
       var isCombo =
         ((srcBitmask == WRAP_ARY_FLAG) && (bitmask == WRAP_CURRY_FLAG)) ||
-        ((srcBitmask == WRAP_ARY_FLAG) && (bitmask == WRAP_REARG_FLAG) && (data[7].length <= 0 2 source[8])) || ((srcbitmask="=" (wrap_ary_flag | wrap_rearg_flag)) && (source[7].length <="source[8])" (bitmask="=" wrap_curry_flag)); exit early if metadata can't be merged. (!(iscommon iscombo)) { return data; } use source `thisarg` available. (srcbitmask & wrap_bind_flag) data[2]="source[2];" set when currying a bound function. newbitmask wrap_bind_flag ? : wrap_curry_bound_flag; compose partial arguments. var value="source[3];" (value) partials="data[3];" data[3]="partials" composeargs(partials, value, source[4]) value; data[4]="partials" replaceholders(data[3], placeholder) source[4]; right data[5]="partials" composeargsright(partials, source[6]) data[6]="partials" replaceholders(data[5], source[6]; `argpos` data[7]="value;" `ary` it's smaller. wrap_ary_flag) data[8]="data[8]" =="null" source[8] nativemin(data[8], source[8]); `arity` one is not provided. (data[9]="=" null) data[9]="source[9];" `func` and merge bitmasks. data[0]="source[0];" data[1]="newBitmask;" ** * this function like [`object.keys`](http: ecma-international.org ecma-262 7.0 #sec-object.keys) except that it includes inherited enumerable properties. @private @param {object} object the to query. @returns {array} returns array of property names. nativekeysin(object) result="[];" (object !="null)" for (var key in object(object)) result.push(key); result; converts `value` string using `object.prototype.tostring`. {*} convert. {string} converted string. objecttostring(value) nativeobjecttostring.call(value); specialized version `baserest` which transforms rest array. {function} func apply parameter to. {number} [start="func.length-1]" start position parameter. transform transform. new overrest(func, start, transform) undefined (func.length - 1) 0); function() args="arguments," index="-1," length="nativeMax(args.length" 0), while (++index length) array[index]="args[start" + index]; otherargs="Array(start" 1); start) otherargs[index]="args[index];" otherargs[start]="transform(array);" apply(func, this, otherargs); }; gets parent at `path` `object`. path get of. value. parent(object, path) path.length baseget(object, baseslice(path, 0, -1)); reorder `array` according specified indexes where element first assigned as element, second so on. reorder. arranged indexes. `array`. reorder(array, indexes) arrlength="array.length," arrlength), oldarray="copyArray(array);" (length--) array[length]="isIndex(index," arrlength) oldarray[index] undefined; array; sets `func`. **note:** becomes hot, i.e. invoked lot short period time, will trip its breaker transition an identity avoid garbage collection pauses v8. see [v8 issue 2070](https: bugs.chromium.org p v8 issues detail?id="2070)" more details. associate with. data metadata. setdata="shortOut(baseSetData);" simple wrapper around global [`settimeout`](https: mdn.io settimeout). delay. wait number milliseconds delay invocation. {number|object} timer id or timeout object. settimeout="ctxSetTimeout" function(func, wait) root.settimeout(func, wait); `tostring` method `string`. modify. result. settostring="shortOut(baseSetToString);" `wrapper` mimic `reference` with details comment top body. reference bitmask flags. `createwrap` `wrapper`. setwraptostring(wrapper, reference, bitmask) ''); settostring(wrapper, insertwrapdetails(source, updatewrapdetails(getwrapdetails(source), bitmask))); creates that'll out invoke `identity` instead called `hot_count` times `hot_span` milliseconds. restrict. shortable shortout(func) count="0," lastcalled="0;" stamp="nativeNow()," remaining="HOT_SPAN" (stamp lastcalled); (remaining> 0) {
+        ((srcBitmask == WRAP_ARY_FLAG) && (bitmask == WRAP_REARG_FLAG) && (data[7].length <= source[8])) ||
+        ((srcBitmask == (WRAP_ARY_FLAG | WRAP_REARG_FLAG)) && (source[7].length <= source[8]) && (bitmask == WRAP_CURRY_FLAG));
+
+      // Exit early if metadata can't be merged.
+      if (!(isCommon || isCombo)) {
+        return data;
+      }
+      // Use source `thisArg` if available.
+      if (srcBitmask & WRAP_BIND_FLAG) {
+        data[2] = source[2];
+        // Set when currying a bound function.
+        newBitmask |= bitmask & WRAP_BIND_FLAG ? 0 : WRAP_CURRY_BOUND_FLAG;
+      }
+      // Compose partial arguments.
+      var value = source[3];
+      if (value) {
+        var partials = data[3];
+        data[3] = partials ? composeArgs(partials, value, source[4]) : value;
+        data[4] = partials ? replaceHolders(data[3], PLACEHOLDER) : source[4];
+      }
+      // Compose partial right arguments.
+      value = source[5];
+      if (value) {
+        partials = data[5];
+        data[5] = partials ? composeArgsRight(partials, value, source[6]) : value;
+        data[6] = partials ? replaceHolders(data[5], PLACEHOLDER) : source[6];
+      }
+      // Use source `argPos` if available.
+      value = source[7];
+      if (value) {
+        data[7] = value;
+      }
+      // Use source `ary` if it's smaller.
+      if (srcBitmask & WRAP_ARY_FLAG) {
+        data[8] = data[8] == null ? source[8] : nativeMin(data[8], source[8]);
+      }
+      // Use source `arity` if one is not provided.
+      if (data[9] == null) {
+        data[9] = source[9];
+      }
+      // Use source `func` and merge bitmasks.
+      data[0] = source[0];
+      data[1] = newBitmask;
+
+      return data;
+    }
+
+    /**
+     * This function is like
+     * [`Object.keys`](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
+     * except that it includes inherited enumerable properties.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @returns {Array} Returns the array of property names.
+     */
+    function nativeKeysIn(object) {
+      var result = [];
+      if (object != null) {
+        for (var key in Object(object)) {
+          result.push(key);
+        }
+      }
+      return result;
+    }
+
+    /**
+     * Converts `value` to a string using `Object.prototype.toString`.
+     *
+     * @private
+     * @param {*} value The value to convert.
+     * @returns {string} Returns the converted string.
+     */
+    function objectToString(value) {
+      return nativeObjectToString.call(value);
+    }
+
+    /**
+     * A specialized version of `baseRest` which transforms the rest array.
+     *
+     * @private
+     * @param {Function} func The function to apply a rest parameter to.
+     * @param {number} [start=func.length-1] The start position of the rest parameter.
+     * @param {Function} transform The rest array transform.
+     * @returns {Function} Returns the new function.
+     */
+    function overRest(func, start, transform) {
+      start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
+      return function() {
+        var args = arguments,
+            index = -1,
+            length = nativeMax(args.length - start, 0),
+            array = Array(length);
+
+        while (++index < length) {
+          array[index] = args[start + index];
+        }
+        index = -1;
+        var otherArgs = Array(start + 1);
+        while (++index < start) {
+          otherArgs[index] = args[index];
+        }
+        otherArgs[start] = transform(array);
+        return apply(func, this, otherArgs);
+      };
+    }
+
+    /**
+     * Gets the parent value at `path` of `object`.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {Array} path The path to get the parent value of.
+     * @returns {*} Returns the parent value.
+     */
+    function parent(object, path) {
+      return path.length < 2 ? object : baseGet(object, baseSlice(path, 0, -1));
+    }
+
+    /**
+     * Reorder `array` according to the specified indexes where the element at
+     * the first index is assigned as the first element, the element at
+     * the second index is assigned as the second element, and so on.
+     *
+     * @private
+     * @param {Array} array The array to reorder.
+     * @param {Array} indexes The arranged array indexes.
+     * @returns {Array} Returns `array`.
+     */
+    function reorder(array, indexes) {
+      var arrLength = array.length,
+          length = nativeMin(indexes.length, arrLength),
+          oldArray = copyArray(array);
+
+      while (length--) {
+        var index = indexes[length];
+        array[length] = isIndex(index, arrLength) ? oldArray[index] : undefined;
+      }
+      return array;
+    }
+
+    /**
+     * Sets metadata for `func`.
+     *
+     * **Note:** If this function becomes hot, i.e. is invoked a lot in a short
+     * period of time, it will trip its breaker and transition to an identity
+     * function to avoid garbage collection pauses in V8. See
+     * [V8 issue 2070](https://bugs.chromium.org/p/v8/issues/detail?id=2070)
+     * for more details.
+     *
+     * @private
+     * @param {Function} func The function to associate metadata with.
+     * @param {*} data The metadata.
+     * @returns {Function} Returns `func`.
+     */
+    var setData = shortOut(baseSetData);
+
+    /**
+     * A simple wrapper around the global [`setTimeout`](https://mdn.io/setTimeout).
+     *
+     * @private
+     * @param {Function} func The function to delay.
+     * @param {number} wait The number of milliseconds to delay invocation.
+     * @returns {number|Object} Returns the timer id or timeout object.
+     */
+    var setTimeout = ctxSetTimeout || function(func, wait) {
+      return root.setTimeout(func, wait);
+    };
+
+    /**
+     * Sets the `toString` method of `func` to return `string`.
+     *
+     * @private
+     * @param {Function} func The function to modify.
+     * @param {Function} string The `toString` result.
+     * @returns {Function} Returns `func`.
+     */
+    var setToString = shortOut(baseSetToString);
+
+    /**
+     * Sets the `toString` method of `wrapper` to mimic the source of `reference`
+     * with wrapper details in a comment at the top of the source body.
+     *
+     * @private
+     * @param {Function} wrapper The function to modify.
+     * @param {Function} reference The reference function.
+     * @param {number} bitmask The bitmask flags. See `createWrap` for more details.
+     * @returns {Function} Returns `wrapper`.
+     */
+    function setWrapToString(wrapper, reference, bitmask) {
+      var source = (reference + '');
+      return setToString(wrapper, insertWrapDetails(source, updateWrapDetails(getWrapDetails(source), bitmask)));
+    }
+
+    /**
+     * Creates a function that'll short out and invoke `identity` instead
+     * of `func` when it's called `HOT_COUNT` or more times in `HOT_SPAN`
+     * milliseconds.
+     *
+     * @private
+     * @param {Function} func The function to restrict.
+     * @returns {Function} Returns the new shortable function.
+     */
+    function shortOut(func) {
+      var count = 0,
+          lastCalled = 0;
+
+      return function() {
+        var stamp = nativeNow(),
+            remaining = HOT_SPAN - (stamp - lastCalled);
+
+        lastCalled = stamp;
+        if (remaining > 0) {
           if (++count >= HOT_COUNT) {
             return arguments[0];
           }
@@ -14048,7 +15397,7 @@ module.exports = g;
         fromIndex = nativeMax(length + fromIndex, 0);
       }
       return isString(collection)
-        ? (fromIndex <= length && collection.indexof(value, fromindex)> -1)
+        ? (fromIndex <= length && collection.indexOf(value, fromIndex) > -1)
         : (!!length && baseIndexOf(collection, value, fromIndex) > -1);
     }
 
@@ -14660,7 +16009,42 @@ module.exports = g;
         if (--n > 0) {
           result = func.apply(this, arguments);
         }
-        if (n <= 1) { func="undefined;" } return result; }; ** * creates a function that invokes `func` with the `this` binding of `thisarg` and `partials` prepended to arguments it receives. `_.bind.placeholder` value, which defaults `_` in monolithic builds, may be used as placeholder for partially applied arguments. **note:** unlike native `function#bind`, this method doesn't set "length" property bound functions. @static @memberof _ @since 0.1.0 @category @param {function} bind. {*} thisarg `func`. {...*} [partials] applied. @returns returns new function. @example greet(greeting, punctuation) greeting + ' this.user punctuation; var object="{" 'user': 'fred' object, 'hi'); bound('!'); => 'hi fred!'
+        if (n <= 1) {
+          func = undefined;
+        }
+        return result;
+      };
+    }
+
+    /**
+     * Creates a function that invokes `func` with the `this` binding of `thisArg`
+     * and `partials` prepended to the arguments it receives.
+     *
+     * The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
+     * may be used as a placeholder for partially applied arguments.
+     *
+     * **Note:** Unlike native `Function#bind`, this method doesn't set the "length"
+     * property of bound functions.
+     *
+     * @static
+     * @memberOf _
+     * @since 0.1.0
+     * @category Function
+     * @param {Function} func The function to bind.
+     * @param {*} thisArg The `this` binding of `func`.
+     * @param {...*} [partials] The arguments to be partially applied.
+     * @returns {Function} Returns the new bound function.
+     * @example
+     *
+     * function greet(greeting, punctuation) {
+     *   return greeting + ' ' + this.user + punctuation;
+     * }
+     *
+     * var object = { 'user': 'fred' };
+     *
+     * var bound = _.bind(greet, object, 'hi');
+     * bound('!');
+     * // => 'hi fred!'
      *
      * // Bound with placeholders.
      * var bound = _.bind(greet, object, _, '!');
@@ -16285,7 +17669,24 @@ module.exports = g;
      */
     function isLength(value) {
       return typeof value == 'number' &&
-        value > -1 && value % 1 == 0 && value <= max_safe_integer; } ** * checks if `value` is the [language type](http: www.ecma-international.org ecma-262 7.0 #sec-ecmascript-language-types) of `object`. (e.g. arrays, functions, objects, regexes, `new number(0)`, and string('')`) @static @memberof _ @since 0.1.0 @category lang @param {*} value to check. @returns {boolean} returns `true` an object, else `false`. @example _.isobject({}); => true
+        value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+    }
+
+    /**
+     * Checks if `value` is the
+     * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+     * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+     *
+     * @static
+     * @memberOf _
+     * @since 0.1.0
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+     * @example
+     *
+     * _.isObject({});
+     * // => true
      *
      * _.isObject([1, 2, 3]);
      * // => true
@@ -16649,7 +18050,22 @@ module.exports = g;
      * // => false
      */
     function isSafeInteger(value) {
-      return isInteger(value) && value >= -MAX_SAFE_INTEGER && value <= max_safe_integer; } ** * checks if `value` is classified as a `set` object. @static @memberof _ @since 4.3.0 @category lang @param {*} value the to check. @returns {boolean} returns `true` set, else `false`. @example _.isset(new set); => true
+      return isInteger(value) && value >= -MAX_SAFE_INTEGER && value <= MAX_SAFE_INTEGER;
+    }
+
+    /**
+     * Checks if `value` is classified as a `Set` object.
+     *
+     * @static
+     * @memberOf _
+     * @since 4.3.0
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a set, else `false`.
+     * @example
+     *
+     * _.isSet(new Set);
+     * // => true
      *
      * _.isSet(new WeakSet);
      * // => false
@@ -16831,7 +18247,22 @@ module.exports = g;
      * // => false
      */
     var lte = createRelationalOperation(function(value, other) {
-      return value <= 2 other; }); ** * converts `value` to an array. @static @since 0.1.0 @memberof _ @category lang @param {*} value the convert. @returns {array} returns converted @example _.toarray({ 'a': 1, 'b': => [1, 2]
+      return value <= other;
+    });
+
+    /**
+     * Converts `value` to an array.
+     *
+     * @static
+     * @since 0.1.0
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to convert.
+     * @returns {Array} Returns the converted array.
+     * @example
+     *
+     * _.toArray({ 'a': 1, 'b': 2 });
+     * // => [1, 2]
      *
      * _.toArray('abc');
      * // => ['a', 'b', 'c']
@@ -19198,7 +20629,7 @@ module.exports = g;
      * // => 'hello fred!'
      *
      * // Use the HTML "escape" delimiter to escape data property values.
-     * var compiled = _.template('<b><%- value %></%-></b>');
+     * var compiled = _.template('<b><%- value %></b>');
      * compiled({ 'value': '<script>' });
      * // => '<b>&lt;script&gt;</b>'
      *
@@ -34099,4 +35530,4 @@ var zhCn = moment.defineLocale('zh-cn', {
         s : '几秒',
         ss : '%d 秒',
         m : '1 分钟',
-        mm : '%d 分</script></%=></",></=></=></=></body></=></=></=></=></=></=></',></':></%=([\s\s]+?)%></%([\s\s]+?)%></%-([\s\s]+?)%></http:></https:></https:></https:></=></=></=></=></=></=></=></=></=></=>
+        mm : '%d 分
